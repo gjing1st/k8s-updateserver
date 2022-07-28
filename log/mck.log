@@ -1,0 +1,30 @@
+[36mINFO[0m[2022-05-20 09:09:39]D:/project/mck/mck-service-core/internal/pkg/utils/database/db.go:93 mck/internal/pkg/utils/database.InitDb() init db success                              
+[31mPANI[0m[2022-05-20 09:09:39]D:/project/mck/mck-service-core/internal/pkg/utils/database/db.go:36 mck/internal/pkg/utils/database.InitDb.func1() postgresql数据库连接关闭                             [31merr[0m=defer
+[36mINFO[0m[2022-05-20 09:10:49]D:/project/mck/mck-service-core/internal/pkg/utils/database/db.go:93 mck/internal/pkg/utils/database.InitDb() init db success                              
+[31mPANI[0m[2022-05-20 09:10:49]D:/project/mck/mck-service-core/internal/pkg/utils/database/db.go:36 mck/internal/pkg/utils/database.InitDb.func1() postgresql数据库连接关闭                             [31merr[0m=defer
+[36mINFO[0m[2022-05-20 09:11:12]D:/project/mck/mck-service-core/internal/pkg/utils/database/db.go:93 mck/internal/pkg/utils/database.InitDb() init db success                              
+[36mINFO[0m[2022-05-20 09:11:12]D:/project/mck/mck-service-core/internal/pkg/utils/database/redis.go:27 mck/internal/pkg/utils/database.InitRedis() init redis success                           
+[36mINFO[0m[2022-05-20 09:11:12]D:/project/mck/mck-service-core/cmd/mck/main.go:12 main.main() CPUNUM:                                       [36mcpuNum[0m=8
+[36mINFO[0m[2022-05-20 09:14:02]D:/project/mck/mck-service-core/internal/pkg/utils/database/db.go:92 mck/internal/pkg/utils/database.InitDb() init db success                              
+[36mINFO[0m[2022-05-20 09:14:03]D:/project/mck/mck-service-core/internal/pkg/utils/database/redis.go:27 mck/internal/pkg/utils/database.InitRedis() init redis success                           
+[36mINFO[0m[2022-05-20 09:14:03]D:/project/mck/mck-service-core/cmd/mck/main.go:12 main.main() CPUNUM:                                       [36mcpuNum[0m=8
+[36mINFO[0m[2022-06-24 10:40:16]D:/project/mck/mck-service-core/cmd/mck/main.go:12 main.main() CPUNUM:                                       [36mcpuNum[0m=8
+[36mINFO[0m[2022-06-24 11:31:55]D:/project/mck/mck-service-core/internal/pkg/utils/database/db.go:93 mck/internal/pkg/utils/database.InitDb() init db success                              
+[31mPANI[0m[2022-06-24 11:32:00]D:/project/mck/mck-service-core/internal/pkg/utils/database/redis.go:25 mck/internal/pkg/utils/database.InitRedis() init redis error                              [31merr[0m="dial tcp: i/o timeout"
+[36mINFO[0m[2022-06-24 11:32:23]D:/project/mck/mck-service-core/internal/pkg/utils/database/db.go:93 mck/internal/pkg/utils/database.InitDb() init db success                              
+[36mINFO[0m[2022-06-24 11:32:23]D:/project/mck/mck-service-core/cmd/mck/main.go:12 main.main() CPUNUM:                                       [36mcpuNum[0m=8
+[36mINFO[0m[2022-06-24 11:32:56]D:/project/mck/mck-service-core/internal/pkg/utils/database/db.go:95 mck/internal/pkg/utils/database.InitDb() init db success                              
+[36mINFO[0m[2022-06-24 11:32:56]D:/project/mck/mck-service-core/cmd/mck/main.go:12 main.main() CPUNUM:                                       [36mcpuNum[0m=8
+[36mINFO[0m[2022-06-24 15:02:32]D:/project/mck/mck-service-core/internal/pkg/utils/database/db.go:98 mck/internal/pkg/utils/database.InitDb() init db success                              
+[36mINFO[0m[2022-06-24 15:02:32]D:/project/mck/mck-service-core/cmd/mck/main.go:12 main.main() CPUNUM:                                       [36mcpuNum[0m=8
+[36mINFO[0m[2022-06-24 15:02:41]D:/project/mck/mck-service-core/internal/pkg/utils/database/db.go:98 mck/internal/pkg/utils/database.InitDb() init db success                              
+[36mINFO[0m[2022-06-24 15:02:41]D:/project/mck/mck-service-core/cmd/mck/main.go:12 main.main() CPUNUM:                                       [36mcpuNum[0m=8
+[36mINFO[0m[2022-06-24 15:02:50]D:/project/mck/mck-service-core/internal/pkg/utils/database/db.go:98 mck/internal/pkg/utils/database.InitDb() init db success                              
+[36mINFO[0m[2022-06-24 15:02:50]D:/project/mck/mck-service-core/cmd/mck/main.go:12 main.main() CPUNUM:                                       [36mcpuNum[0m=8
+[36mINFO[0m[2022-07-19 19:47:10]D:/project/upserver/cmd/mck/main.go:12 main.main() CPUNUM:                                       [36mcpuNum[0m=8
+[36mINFO[0m[2022-07-19 19:47:33]D:/project/upserver/cmd/mck/main.go:12 main.main() CPUNUM:                                       [36mcpuNum[0m=8
+[36mINFO[0m[2022-07-19 19:47:53]D:/project/upserver/cmd/mck/main.go:12 main.main() CPUNUM:                                       [36mcpuNum[0m=8
+[31mERRO[0m[2022-07-19 19:48:17]D:/project/upserver/internal/pkg/service/docker.go:76 upserver/internal/pkg/service.DockerService.Load() 导入镜像失败                                        [31merror[0m="exec: \"docker\": executable file not found in %PATH%: "
+[36mINFO[0m[2022-07-25 18:07:44]D:/project/upserver/cmd/upserver/main.go:12 main.main() CPUNUM:                                       [36mcpuNum[0m=8
+[36mINFO[0m[2022-07-25 18:08:43]D:/project/upserver/cmd/upserver/main.go:12 main.main() CPUNUM:                                       [36mcpuNum[0m=8
+[36mINFO[0m[2022-07-25 18:10:10]D:/project/upserver/internal/pkg/harbor/client.go:33 upserver/internal/pkg/harbor.Client() client set err                                [36mclient error[0m="parse \"192.168.0.80:30002\": first path segment in URL cannot contain colon"

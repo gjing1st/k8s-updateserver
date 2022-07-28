@@ -1,0 +1,30 @@
+log:
+  # std|file
+  output: std
+  # trace|debug|info|warn
+  level: info
+  # 是否打印调用者信息
+  caller: true
+  # 日志目录
+  dir: ./log
+#镜像存放目录
+path: /tmp
+harbor:
+  address: http://192.168.0.80:30002
+  admin: admin
+  password: Harbor12345
+#web基础配置
+web:
+  port: 9908
+  #跨域开关
+  cors: true
+#mysql配置
+mysql:
+  #host: localhost
+  host: 127.0.0.1
+  username: root
+  password: 123456
+  dbname: mck
+  port: 3306
+  minconns: 160
+  maxconns: 200

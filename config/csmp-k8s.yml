@@ -1,0 +1,31 @@
+apisix:
+  url: http://127.0.0.1:9080
+k8s:
+  url: http://ks-apiserver.kubesphere-system.svc
+  namespace: csmp
+kmc:
+  url: http://kmc.csmp:9527
+  appid: "csmp"
+  appsecret: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpX"
+admin:
+  url: http://admin.csmp:8100
+health:
+  url: http://health.csmp:8003
+mysql:
+  ip: mysql.csmp
+  port: 3306
+  username: root
+  password: zf12345678
+  dbname: mmyypt_db
+  readtimeout: 10000
+  writetimeout: 10000
+images:
+- model: dk1
+  url: 192.168.0.80:30002/csmp/hsmsoft:v3.1.0
+  port: 9255
+- model: tss-yw
+  url: 192.168.0.80:30002/csmp/stftsfm:3.1.0
+  port: 9211
+- model: tss-bjca
+  url: 192.168.0.3:30002/csmp/stftsbjca:3.1.0
+  port: 9211
