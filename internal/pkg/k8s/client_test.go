@@ -56,6 +56,9 @@ func TestGetVersions(t *testing.T) {
 }
 
 func TestFiles(t *testing.T) {
-	v,_ := Files("app-4jylnmjkr95ow1","appv-wxnk29rv375zq9")
-	fmt.Println(v)
+	//v,_ := Files("app-4jylnmjkr95ow1","appv-wxnk29rv375zq9")
+	//fmt.Println(v)
+	file := "csmp-backend_V3.1.0.tar"
+	f := utils.UnExt(file)
+	fmt.Println(f)
 }

@@ -15,6 +15,6 @@ func initK8sVersionApi(apiV1 *gin.RouterGroup)  {
 	api :=apiV1.Group("/versions")
 	k8sController := controller.K8sVersionController{}
 	api.GET("/latest",k8sController.GetVersion)
-	api.POST("/up",k8sController.UpdateVersion)
+	api.POST("/update",k8sController.UpdateVersion)
 
 }

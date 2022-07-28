@@ -40,8 +40,8 @@ var K8sConfig = struct {
 		Password   string `default:"Dked@213"`
 	}
 	Harbor struct {
-		//Address  string `default:"http://dockerhub.dked.local:30002"`
-		Address  string `default:"http://192.168.0.80:30002"`
+		//Address  string `default:"dockerhub.dked.local:30002"`
+		Address  string `default:"192.168.0.80:30002"`
 		Admin    string `default:"admin"`
 		Password string `default:"Harbor12345"`
 		Project string `default:"csmp"`

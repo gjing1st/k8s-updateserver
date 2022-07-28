@@ -11,4 +11,5 @@ func initHarborApi(apiV1 *gin.RouterGroup)  {
 	//镜像仓库列表
 	api.GET("/list",harborController.ListRepositories)
 	api.GET("/list-art",harborController.ListArtifacts)
+	api.POST("/upload",harborController.Upload)
 }
