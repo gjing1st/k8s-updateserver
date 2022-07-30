@@ -32,6 +32,7 @@ func (ks K8sService) GetAppAndVersion(workspace, namespace string) (res model.K8
 
 	res.App = *apps
 	appid := apps.Items[0].App.AppId
+	//TODO 遍历每个应用获取其对应的版本号
 	versionRes, err2 := k8s.GetVersions(appid)
 	if err2 != nil {
 		err = err2

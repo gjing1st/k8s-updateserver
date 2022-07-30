@@ -11,5 +11,5 @@ const (
 )
 
 const (
-	HarborProject = "csmp"
+	HelmRepoName = "harbor"
 )
