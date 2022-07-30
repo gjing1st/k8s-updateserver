@@ -12,8 +12,10 @@ const (
 )
 
 const (
-	DockerLoadErr = "导入镜像失败"
-	DockerTagErr = "镜像标记失败"
-	DockerPushErr = "镜像推送失败"
+	DockerLoadErr  = "导入镜像失败"
+	DockerTagErr   = "镜像标记失败"
+	DockerPushErr  = "镜像推送失败"
 	DockerLoginErr = "私有仓库登录失败"
+	AddHelmRepoErr = "添加helm私有仓库失败"
+	HelmPushErr    = "helm推送失败"
 )

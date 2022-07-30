@@ -2,14 +2,12 @@ package main
 
 import (
 	"upserver/internal/apiserver"
-	log "github.com/sirupsen/logrus"
-	"runtime"
+	"upserver/internal/pkg/service"
 )
 
 func main() {
-	cores := runtime.NumCPU()
-	runtime.GOMAXPROCS(cores)
-	log.WithFields(log.Fields{"cpuNum": cores}).Info("CPUNUM:")
+	service.Init()
 	go apiserver.HttpStart()
+
 	select {}
 }

@@ -1,10 +1,14 @@
 package service
 
 import (
+	"bytes"
+	"fmt"
 	log "github.com/sirupsen/logrus"
 	"io/ioutil"
+	"os/exec"
 	"path"
 	"strings"
+	"upserver/internal/pkg/constant"
 	"upserver/internal/pkg/utils"
 )
 
@@ -12,6 +16,13 @@ type HarborService struct {
 }
 
 var dockerService DockerService
+
+func Init()  {
+	//docker登录
+	dockerService.Login()
+	//添加私有仓库
+	HarborService{}.AddHelmRepo()
+}
 
 // DealFile
 // @description: 处理解压后的文件
@@ -79,4 +90,53 @@ func (hs HarborService) DockerPush(projectName, dirPath, fileName string) error 
 			Error("镜像docker push失败")
 	}
 	return err
+}
+
+// AddHelmRepo
+// @description: 添加helm私有仓库
+// @author: GJing
+// @email: guojing@tna.cn
+// @date: 2022/7/29 17:24
+// @success:
+func (hs HarborService) AddHelmRepo() (err error) {
+	//helm文件要上传到的仓库地址
+	repoAddress := "http://"+ utils.K8sConfig.Harbor.Admin+":"+ utils.K8sConfig.Harbor.Password+"@"+
+		utils.K8sConfig.Harbor.Address+"/chartrepo/"+utils.K8sConfig.Harbor.Project
+	var stderr bytes.Buffer
+	cmd := exec.Command("helm", "repo", "add", constant.HelmRepoName, repoAddress)
+	cmd.Stderr = &stderr
+	err = cmd.Run()
+	//fmt.Println("======",cmd.String())
+	if err != nil {
+		//镜像推送失败
+		log.WithFields(log.Fields{
+			"error": fmt.Sprint(err) + ": " + stderr.String(),
+			"cmd":   cmd.String(),
+		}).Error(constant.AddHelmRepoErr)
+		panic("添加helm仓库失败")
+	}
+	return
+
+}
+// HelmChartPush
+// @description: 推送char包至私有仓库
+// @param: charName helm chart 压缩包全路径名称 ex:/home/data/csmp-0.1.0.tgz
+// @author: GJing
+// @email: guojing@tna.cn
+// @date: 2022/7/29 17:30
+// @success:
+func (hs HarborService) HelmChartPush(charName string) (err error)  {
+	var stderr bytes.Buffer
+	cmd := exec.Command("helm", "cm-push", charName, constant.HelmRepoName)
+	cmd.Stderr = &stderr
+	err = cmd.Run()
+	if err != nil {
+		//镜像推送失败
+		log.WithFields(log.Fields{
+			"error": fmt.Sprint(err) + ": " + stderr.String(),
+			"cmd":   cmd.String(),
+		}).Error(constant.HelmPushErr)
+		panic("helm推送失败")
+	}
+	return
 }

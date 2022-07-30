@@ -23,10 +23,10 @@ type DockerService struct {
 // @date: 2022/7/19 19:31
 // @success:
 func (ds DockerService) PushHarbor(fullName, imageName, tagName string) (err error) {
-	err = ds.Login()
-	if err != nil {
-		return
-	}
+	//err = ds.Login()
+	//if err != nil {
+	//	return
+	//}
 	err = ds.Load(fullName)
 	if err != nil {
 		return
@@ -57,6 +57,7 @@ func (ds DockerService) Login() (err error) {
 			"cmd":   cmd.String(),
 		}).Error(constant.DockerLoginErr)
 		err = errors.New(constant.DockerLoginErr)
+		panic(constant.DockerLoginErr)
 	}
 	return
 }
