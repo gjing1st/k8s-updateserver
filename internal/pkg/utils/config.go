@@ -44,7 +44,7 @@ var K8sConfig = struct {
 		Address  string `default:"192.168.0.80:30002"`
 		Admin    string `default:"admin"`
 		Password string `default:"Harbor12345"`
-		Project string `default:"csmp"`
+		Project string `default:"library"`
 	}
 }{}
 
