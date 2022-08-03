@@ -17,7 +17,7 @@ type HarborService struct {
 
 var dockerService DockerService
 
-func Init()  {
+func Init() {
 	//docker登录
 	dockerService.Login()
 	//添加私有仓库
@@ -38,7 +38,7 @@ func (hs HarborService) DealFile(projectName, dirPath string) error {
 		log.WithFields(log.Fields{"dirPath": dirPath, "err": err}).Error("读取目录中的文件错误")
 		return err
 	}
-
+	var has HarborService
 	//遍历解压后目录中的所有文件
 	for _, fileInfo := range fileInfos {
 		fileName := fileInfo.Name()
@@ -51,7 +51,10 @@ func (hs HarborService) DealFile(projectName, dirPath string) error {
 			}
 		} else if fileExt == ".tgz" {
 			//helm包
-
+			err = has.HelmChartPush(dirPath + "/" + fileName)
+			if err != nil {
+				return err
+			}
 		}
 
 	}
@@ -81,7 +84,7 @@ func (hs HarborService) DockerPush(projectName, dirPath, fileName string) error 
 	imageFullName := imageName + ":" + imageVersion
 	//标记的镜像名称
 	if projectName == "" {
-		projectName = "library"
+		projectName = utils.K8sConfig.Harbor.Project
 	}
 	tagName := utils.K8sConfig.Harbor.Address + "/" + projectName + "/" + imageFullName
 	err := dockerService.PushHarbor(dirPath+"/"+fileName, imageFullName, tagName)
@@ -99,9 +102,9 @@ func (hs HarborService) DockerPush(projectName, dirPath, fileName string) error 
 // @date: 2022/7/29 17:24
 // @success:
 func (hs HarborService) AddHelmRepo() (err error) {
-	//helm文件要上传到的仓库地址
-	repoAddress := "http://"+ utils.K8sConfig.Harbor.Admin+":"+ utils.K8sConfig.Harbor.Password+"@"+
-		utils.K8sConfig.Harbor.Address+"/chartrepo/"+utils.K8sConfig.Harbor.Project
+	//helm文件要上传到的仓库地址 http://admin:Harbor12345@core.harbor.dked:30002/chartrepo/csmp
+	repoAddress := "http://" + utils.K8sConfig.Harbor.Admin + ":" + utils.K8sConfig.Harbor.Password + "@" +
+		utils.K8sConfig.Harbor.Address + "/chartrepo/" + utils.K8sConfig.Harbor.Project
 	var stderr bytes.Buffer
 	cmd := exec.Command("helm", "repo", "add", constant.HelmRepoName, repoAddress)
 	cmd.Stderr = &stderr
@@ -118,6 +121,7 @@ func (hs HarborService) AddHelmRepo() (err error) {
 	return
 
 }
+
 // HelmChartPush
 // @description: 推送char包至私有仓库
 // @param: charName helm chart 压缩包全路径名称 ex:/home/data/csmp-0.1.0.tgz
@@ -125,7 +129,7 @@ func (hs HarborService) AddHelmRepo() (err error) {
 // @email: guojing@tna.cn
 // @date: 2022/7/29 17:30
 // @success:
-func (hs HarborService) HelmChartPush(charName string) (err error)  {
+func (hs HarborService) HelmChartPush(charName string) (err error) {
 	var stderr bytes.Buffer
 	cmd := exec.Command("helm", "cm-push", charName, constant.HelmRepoName)
 	cmd.Stderr = &stderr

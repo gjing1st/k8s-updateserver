@@ -149,7 +149,7 @@ func UpVersion(up UpVersionReq) (message string, err error) {
 	var res *UpMessageResponse
 	httpCode, err1 := JsonRestRequestTimeout("POST", reqUrl, up, &res, time.Second*10)
 	if err1 != nil || httpCode != http.StatusOK {
-		log.WithField("err", err1).Info("升级失败")
+		log.WithFields(log.Fields{"err":err1,"reqUrl":reqUrl,"res":res}).Info("升级失败")
 		return "", errors.New("升级失败")
 	}
 	message = res.Message

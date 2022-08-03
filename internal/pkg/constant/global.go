@@ -13,3 +13,5 @@ const (
 const (
 	HelmRepoName = "harbor"
 )
+
+var HarborPushed = 0

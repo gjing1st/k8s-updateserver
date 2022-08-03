@@ -10,12 +10,12 @@ log:
 #镜像存放目录
 path: /tmp
 harbor:
-  address: http://192.168.0.80:30002
+  address: http://core.harbor.dked:30002
   admin: admin
   password: Harbor12345
 #web基础配置
 web:
-  port: 9908
+  port: 9680
   #跨域开关
   cors: true
 #mysql配置
