@@ -15,10 +15,10 @@ var Config = struct {
 		Dir    string `default:"."`         //存放目录
 	}
 	Web struct {
-		Port string `default:"9008"`
+		Port string `default:"9680"`
 		Cors bool   `default:"true"`
 	}
-	Path   string `default:"/tmp"`
+	Path  string `default:"/tmp"`
 	Mysql struct {
 		Host     string `default:"127.0.0.1"`
 		UserName string `default:"root"`
@@ -32,19 +32,19 @@ var Config = struct {
 
 var K8sConfig = struct {
 	K8s struct {
-		//Url       string `default:"http://ks-apiserver.kubesphere-system.svc"`
-		Url        string `default:"http://192.168.0.80:30532"`
-		Namespace  string `default:"test"`
+		Url string `default:"http://ks-apiserver.kubesphere-system.svc"`
+		//Url        string `default:"http://114.116.0.192:31981"`
+		Namespace string `default:"csmp"`
 		Workspace string `default:"dked"`
-		Username   string `default:"csmp"`
-		Password   string `default:"Dked@213"`
+		Username  string `default:"csmp"`
+		Password  string `default:"Dked@213"`
 	}
 	Harbor struct {
 		//Address  string `default:"dockerhub.dked.local:30002"`
-		Address  string `default:"192.168.0.80:30002"`
+		Address  string `default:"core.harbor.dked:30002"`
 		Admin    string `default:"admin"`
 		Password string `default:"Harbor12345"`
-		Project string `default:"library"`
+		Project  string `default:"library"`
 	}
 }{}
 
@@ -54,5 +54,5 @@ func InitConfig() {
 	if err != nil {
 		panic("config load error" + err.Error())
 	}
-	err = configor.Load(&K8sConfig, "/config/csmp-k8s.yml")
+	err = configor.Load(&K8sConfig, "./config/csmp-k8s.yml")
 }

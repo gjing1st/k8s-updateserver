@@ -119,6 +119,7 @@ func UnzipDir(zipFile, dir string) {
 
 	r, err := zip.OpenReader(zipFile)
 	if err != nil {
+		log.Println("zipFile",zipFile)
 		log.Fatalf("Open zip file failed: %s\n", err.Error())
 	}
 	defer r.Close()

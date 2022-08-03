@@ -2,9 +2,16 @@ package service
 
 import (
 	"errors"
+	"fmt"
 	log "github.com/sirupsen/logrus"
+	"io/ioutil"
+	"path"
+	"sort"
+	"strings"
+	"upserver/internal/pkg/constant"
 	"upserver/internal/pkg/k8s"
 	"upserver/internal/pkg/model"
+	"upserver/internal/pkg/utils"
 )
 
 type K8sService struct {
@@ -45,4 +52,65 @@ func (ks K8sService) GetAppAndVersion(workspace, namespace string) (res model.K8
 	}
 	res.Version = *versionRes
 	return
+}
+
+// UnzipAndPush
+// @description: 解压升级包并推送到私有仓库
+// @param:
+// @author: GJing
+// @email: guojing@tna.cn
+// @date: 2022/8/3 10:08
+// @success:
+func (ks K8sService) UnzipAndPush() error {
+	if constant.HarborPushed == 1{
+		return nil
+	}
+	rootPath := utils.Config.Path
+	fileInfos, err := ioutil.ReadDir(rootPath)
+	if err != nil {
+		log.WithField("err", err).Error("读取升级包目录错误")
+		return errors.New("读取升级包目录错误")
+	}
+	dirNames := []string{}
+	for _, fileInfo := range fileInfos {
+		dirName := fileInfo.Name()
+		dirNames = append(dirNames, dirName)
+	}
+	sort.Strings(dirNames)
+	//最后上传应用升级包的目录
+	latestDir := rootPath + "/" + dirNames[len(dirNames)-1] + "/"
+	//获取压缩包名称
+	zipInfos, err := ioutil.ReadDir(latestDir)
+	if err != nil {
+		log.WithField("err", err).Error("读取压缩包目录错误")
+		return errors.New("读取压缩包目录错误")
+	}
+	zipName := zipInfos[0].Name()
+	//解压缩升级包
+	fmt.Println("zipName", zipName)
+	fileExt := path.Ext(zipName)
+	if fileExt == ".zip" {
+		utils.UnzipDir(latestDir+zipName, latestDir)
+	}
+
+	files := strings.Split(zipName, "_")
+	//要上传到的harbor项目名称
+	projectName := files[0]
+	//解压后的路径
+	dirPath := latestDir + zipName
+	if fileExt == ".zip" {
+		dirPath = latestDir + utils.UnExt(zipName)
+	}
+
+	fmt.Println("projectName", projectName)
+	fmt.Println("dirPath", dirPath)
+	//解压后处理解压后的文件
+	err =  HarborService{}.DealFile(projectName, dirPath)
+	if err != nil {
+		constant.HarborPushed = 0
+	}else {
+		constant.HarborPushed = 1
+	}
+
+	return err
 }

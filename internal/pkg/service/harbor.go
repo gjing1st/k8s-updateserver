@@ -102,7 +102,7 @@ func (hs HarborService) DockerPush(projectName, dirPath, fileName string) error 
 // @date: 2022/7/29 17:24
 // @success:
 func (hs HarborService) AddHelmRepo() (err error) {
-	//helm文件要上传到的仓库地址
+	//helm文件要上传到的仓库地址 http://admin:Harbor12345@core.harbor.dked:30002/chartrepo/csmp
 	repoAddress := "http://" + utils.K8sConfig.Harbor.Admin + ":" + utils.K8sConfig.Harbor.Password + "@" +
 		utils.K8sConfig.Harbor.Address + "/chartrepo/" + utils.K8sConfig.Harbor.Project
 	var stderr bytes.Buffer

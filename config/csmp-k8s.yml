@@ -3,6 +3,14 @@ apisix:
 k8s:
   url: http://ks-apiserver.kubesphere-system.svc
   namespace: csmp
+  workspace: dked
+  username: csmp
+  password: Dked@213
+harbor:
+  address: core.harbor.dked:30002
+  admin: admin
+  password: Harbor12345
+  project: csmp
 kmc:
   url: http://kmc.csmp:9527
   appid: "csmp"
@@ -20,12 +28,12 @@ mysql:
   readtimeout: 10000
   writetimeout: 10000
 images:
-- model: dk1
-  url: 192.168.0.80:30002/csmp/hsmsoft:v3.1.0
-  port: 9255
-- model: tss-yw
-  url: 192.168.0.80:30002/csmp/stftsfm:3.1.0
-  port: 9211
-- model: tss-bjca
-  url: 192.168.0.3:30002/csmp/stftsbjca:3.1.0
-  port: 9211
+  - model: dk1
+    url: 192.168.0.80:30002/csmp/hsmsoft:v3.1.0
+    port: 9255
+  - model: tss-yw
+    url: 192.168.0.80:30002/csmp/stftsfm:3.1.0
+    port: 9211
+  - model: tss-bjca
+    url: 192.168.0.3:30002/csmp/stftsbjca:3.1.0
+    port: 9211
