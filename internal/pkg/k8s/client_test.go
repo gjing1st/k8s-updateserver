@@ -8,32 +8,32 @@ import (
 )
 
 func TestClient(t *testing.T) {
-	res,err := GetToken()
-	fmt.Println("err=",err)
+	res, err := GetToken()
+	fmt.Println("err=", err)
 	fmt.Printf("%#v\n", res)
 	fmt.Println("=========")
-	 res1,_ := GetToken()
-	 fmt.Println(res1)
-	res2,_ := GetToken()
+	res1, _ := GetToken()
+	fmt.Println(res1)
+	res2, _ := GetToken()
 	fmt.Println(res2)
 	//GenerateOauthToken()
 }
 
 func TestGetApp(t *testing.T) {
-	GetApp("","")
+	GetApp("", "")
 }
 func TestGetVersions(t *testing.T) {
-	apps,err :=GetApp("","")
+	apps, err := GetApp("", "")
 	if err != nil {
 		return
 	}
-	res,err:=GetVersions(apps.Items[0].App.AppId)
+	res, err := GetVersions(apps.Items[0].App.AppId)
 	if err != nil {
 		return
 	}
-	jon,_ := json.Marshal(res)
+	jon, _ := json.Marshal(res)
 	fmt.Println(string(jon))
-	if len(apps.Items)<0||len(res.Items)<0 {
+	if len(apps.Items) < 0 || len(res.Items) < 0 {
 		return
 	}
 	//lastVersionId := res.Items[0].VersionId
@@ -48,10 +48,10 @@ func TestGetVersions(t *testing.T) {
 		res.Items[0].VersionId,
 		utils.K8sConfig.K8s.Workspace,
 	}
-	upJson,_ := json.Marshal(up)
+	upJson, _ := json.Marshal(up)
 	fmt.Println(string(upJson))
-	res3 ,err := UpVersion(up)
-	jsonRes ,_ := json.Marshal(res3)
+	res3, err := UpVersion(up)
+	jsonRes, _ := json.Marshal(res3)
 	fmt.Println(string(jsonRes))
 }
 
@@ -64,3 +64,12 @@ func TestFiles(t *testing.T) {
 
 }
 
+func TestGetRepoList(t *testing.T) {
+	res, _ := GetRepoList("dked")
+	fmt.Println(res)
+}
+
+func TestUpdateRepo(t *testing.T) {
+	res, _ := UpdateRepo("dked", "repo-xrk8vj9942vy2p")
+	fmt.Println(res)
+}

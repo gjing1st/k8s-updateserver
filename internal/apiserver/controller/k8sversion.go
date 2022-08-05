@@ -108,6 +108,8 @@ func (kv K8sVersionController) UpdateVersion(c *gin.Context) {
 	if reqData.Namespace == "" {
 		reqData.Namespace = utils.K8sConfig.K8s.Namespace
 	}
+	//更新应用仓库
+	_ = k8s.GetAndUpdateRepo(reqData.Workspace)
 
 	appAndVersion, err := k8sService.GetAppAndVersion(reqData.Workspace, reqData.Namespace)
 	if err != nil {

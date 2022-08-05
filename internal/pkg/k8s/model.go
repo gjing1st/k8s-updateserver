@@ -88,12 +88,24 @@ type UpVersionReq struct {
 	Workspace string `json:"workspace"`
 }
 
-type UpMessageResponse struct {
+type MessageResponse struct {
 	Message string `json:"message"`
 }
 
-
 type K8sAppAndVersion struct {
-	App *AppListResponse
+	App     *AppListResponse
 	Version *VersionResponse
+}
+
+//AppRepoResponse 应用列表
+type AppRepoResponse struct {
+	Items []struct {
+		RepoId string `json:"repo_id"`
+		Url    string `json:"url"`
+	} `json:"items"`
+	TotalCount int `json:"total_count"`
+}
+
+type UpdateRequest struct {
+	Action string `json:"action"`
 }

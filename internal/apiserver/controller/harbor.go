@@ -6,9 +6,11 @@ import (
 	"net/http"
 	"os"
 	"path"
+	"strings"
 	"time"
 	"upserver/internal/pkg/constant"
 	"upserver/internal/pkg/harbor"
+	"upserver/internal/pkg/k8s"
 	"upserver/internal/pkg/service"
 	"upserver/internal/pkg/utils"
 )
@@ -86,21 +88,25 @@ func (hc HarborController) Upload(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
-	c.JSON(http.StatusOK,nil)
 	constant.HarborPushed = 0
-	return
-	////解压缩升级包
-	//utils.UnzipDir(fullName, utils.Config.Path+dirName)
-	//files := strings.Split(file.Filename, "_")
-	////要上传到的harbor项目名称
-	//projectName := files[0]
-	////解压后的路径
-	//dirPath := utils.Config.Path + dirName + utils.UnExt(file.Filename)
-	////解压后处理解压后的文件
-	//err = harborService.DealFile(projectName, dirPath)
-	//if err != nil {
-	//	c.JSON(http.StatusInternalServerError, err.Error())
-	//	return
-	//}
+	c.JSON(http.StatusOK, nil)
+	//上传成功后先返回成功，再解压缩和推送私有仓库
+	//return
+	//解压缩升级包
+	utils.UnzipDir(fullName, utils.Config.Path+dirName)
+	files := strings.Split(file.Filename, "_")
+	//要上传到的harbor项目名称
+	projectName := files[0]
+	//解压后的路径
+	dirPath := utils.Config.Path + dirName + utils.UnExt(file.Filename)
+	//解压后处理解压后的文件
+	err = harborService.DealFile(projectName, dirPath)
+	if err == nil {
+		constant.HarborPushed = 1
+		//c.JSON(http.StatusInternalServerError, err.Error())
+		//return
+	}
+	//更新应用仓库
+	_ = k8s.GetAndUpdateRepo("")
 
 }
