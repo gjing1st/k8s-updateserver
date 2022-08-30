@@ -54,7 +54,7 @@ func GetToken() (string, error) {
 	reqUrl := utils.K8sConfig.K8s.Url + "/oauth/token"
 	httpCode, err1 := TokenRequestTimeout("POST", reqUrl, reqData, &res, time.Second*10)
 	if err1 != nil || httpCode != http.StatusOK {
-		log.WithField("err", err1).Info("获取k8s token失败")
+		log.WithFields(log.Fields{"err": err1, "reqData": reqData, "reqUrl": reqUrl}).Info("获取k8s token失败")
 		return "", errors.New("token获取失败")
 	}
 	//log.WithField("res", res).Info("获取成功")
@@ -111,15 +111,15 @@ func GetVersions(appid string) (res *VersionResponse, err error) {
 // @success:
 func Files(appid, versionId string) (valuesYaml string, err error) {
 	var res *FilesResponse
-	reqUrl := utils.K8sConfig.K8s.Url + "/kapis/openpitrix.io/v1/apps/" + appid + "/versions/" + versionId+"/files"
+	reqUrl := utils.K8sConfig.K8s.Url + "/kapis/openpitrix.io/v1/apps/" + appid + "/versions/" + versionId + "/files"
 	httpCode, err1 := JsonRequestTimeout("GET", reqUrl, nil, &res, time.Second*10)
 	if err1 != nil || httpCode != http.StatusOK {
 		log.WithField("err", err1).Info("获取版本文件失败")
 		return "", errors.New("token获取失败")
 	}
-	vaByte,err := base64.StdEncoding.DecodeString(res.Files.ValuesYaml)
+	vaByte, err := base64.StdEncoding.DecodeString(res.Files.ValuesYaml)
 	if err != nil {
-		log.WithField("err",err).Error("版本文件values.yaml解析失败")
+		log.WithField("err", err).Error("版本文件values.yaml解析失败")
 		return "", err
 	}
 	valuesYaml = string(vaByte)
@@ -146,12 +146,82 @@ func UpVersion(up UpVersionReq) (message string, err error) {
 	//reqData.Add("owner", up.Owner)
 	//reqData.Add("version_id", up.VersionId)
 	//reqData.Add("workspace", up.Workspace)
-	var res *UpMessageResponse
+	var res *MessageResponse
 	httpCode, err1 := JsonRestRequestTimeout("POST", reqUrl, up, &res, time.Second*10)
 	if err1 != nil || httpCode != http.StatusOK {
-		log.WithFields(log.Fields{"err":err1,"reqUrl":reqUrl,"res":res}).Info("升级失败")
+		log.WithFields(log.Fields{"err": err1, "reqUrl": reqUrl, "res": res}).Info("升级失败")
 		return "", errors.New("升级失败")
 	}
 	message = res.Message
 	return
+}
+
+// GetRepoList
+// @description: 获取应用仓库列表
+// @param:
+// @author: GJing
+// @email: guojing@tna.cn
+// @date: 2022/8/4 9:18
+// @success:
+func GetRepoList(workspaces string) (res *AppRepoResponse, err error) {
+	if workspaces == "" {
+		workspaces = utils.K8sConfig.K8s.Workspace
+	}
+	reqUrl := utils.K8sConfig.K8s.Url + "/kapis/openpitrix.io/v1/workspaces/" + workspaces + "/repos"
+	httpCode, err1 := JsonRequestTimeout("GET", reqUrl, nil, &res, time.Second*10)
+	if err1 != nil || httpCode != http.StatusOK {
+		log.WithField("err", err1).Info("获取应用仓库列表失败")
+		return res, errors.New("获取应用仓库列表失败")
+	}
+
+	return
+}
+
+
+// UpdateRepo
+// @description: 更新仓库
+// @param:
+// @author: GJing
+// @email: guojing@tna.cn
+// @date: 2022/8/4 9:48
+// @success:
+func UpdateRepo(workspaces, repoId string) (message string, err error) {
+	if workspaces == "" {
+		workspaces = utils.K8sConfig.K8s.Workspace
+	}
+	reqUrl := utils.K8sConfig.K8s.Url + "/kapis/openpitrix.io/v1/workspaces/" + workspaces + "/repos/" + repoId + "/action"
+	var reqData UpdateRequest
+	reqData.Action = "index"
+	var res *MessageResponse
+	httpCode, err1 := JsonRestRequestTimeout("POST", reqUrl, reqData, &res, time.Second*10)
+	if err1 != nil || httpCode != http.StatusOK {
+		log.WithFields(log.Fields{"err": err1, "reqUrl": reqUrl, "res": res}).Info("升级失败")
+		return "", errors.New("升级失败")
+	}
+	message = res.Message
+	return
+}
+
+// GetAndUpdateRepo
+// @description: 获取应用仓库列表并更新
+// @param:
+// @author: GJing
+// @email: guojing@tna.cn
+// @date: 2022/8/4 9:58
+// @success:
+func GetAndUpdateRepo(workspaces string) error {
+	if workspaces == "" {
+		workspaces = utils.K8sConfig.K8s.Workspace
+	}
+	res, err := GetRepoList(workspaces)
+	if err != nil {
+		return err
+	}
+	for _, v := range res.Items {
+		_, err = UpdateRepo(workspaces, v.RepoId)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }

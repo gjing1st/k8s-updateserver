@@ -3,7 +3,7 @@ package constant
 const (
 	RequestParamErr   = "invalid request param"
 	ServerErr         = "server error"
-	RequestErrExt     = "上传tar包格式错误"
+	RequestErrExt     = "上传包格式错误"
 	UsernameHasExists = "该用户名已存在"
 	TokenExpired      = "token is expired or error"
 	UserNotExisted    = "user not existed"

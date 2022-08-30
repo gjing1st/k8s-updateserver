@@ -26,7 +26,7 @@ func InitApi() {
 	//上传接口
 	var uploadController controller.UploadController
 	//镜像上传
-	apiV1.POST("/tar/upload",uploadController.UploadTar)
+	apiV1.POST("/tar/upload",uploadController.UploadTar)//改到harbor，上传整体压缩包
 	apiV1.GET("test",uploadController.Test)
 	//调用harbor相关接口
 	initHarborApi(apiV1)

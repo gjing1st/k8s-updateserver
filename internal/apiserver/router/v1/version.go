@@ -11,10 +11,11 @@ import (
 // @email: guojing@tna.cn
 // @date: 2022/7/28 9:31
 // @success:
-func initK8sVersionApi(apiV1 *gin.RouterGroup)  {
-	api :=apiV1.Group("/versions")
+func initK8sVersionApi(apiV1 *gin.RouterGroup) {
+	api := apiV1.Group("/versions")
 	k8sController := controller.K8sVersionController{}
-	api.GET("/latest",k8sController.GetVersion)
-	api.POST("/update",k8sController.UpdateVersion)
+	api.GET("/latest", k8sController.GetVersion)
+	api.GET("/list", k8sController.GetVersionList)
+	api.POST("/update", k8sController.UpdateVersion)
 
 }

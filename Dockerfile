@@ -5,7 +5,6 @@ FROM golang:alpine  as builder
 ENV CGO_ENABLED=0
 ENV GOOS=linux
 ENV GOPROXY https://goproxy.cn,direct
-WORKDIR /build
 #将上层整个文件夹拷贝到/build
 ADD . /build/src
 WORKDIR /build/src
@@ -34,6 +33,7 @@ COPY --from=builder /build/src/upserver /home/upserver
 #COPY /var/run/docker.sock /var/run/docker.sock
 
 CMD ["./upserver"]
+EXPOSE 9680
 
 #需要设置映射 /var/run/docker.sock:/var/run/docker.sock 将使用宿主机中的docker
 #映射 /usr/local/bin/helm:/usr/local/bin/helm 使用helm

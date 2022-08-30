@@ -32,8 +32,8 @@ var Config = struct {
 
 var K8sConfig = struct {
 	K8s struct {
-		Url string `default:"http://ks-apiserver.kubesphere-system.svc"`
-		//Url        string `default:"http://114.116.0.192:31981"`
+		//Url string `default:"http://ks-apiserver.kubesphere-system.svc"`
+		Url        string `default:"http://192.168.0.3:30532"`
 		Namespace string `default:"csmp"`
 		Workspace string `default:"dked"`
 		Username  string `default:"csmp"`
@@ -44,7 +44,7 @@ var K8sConfig = struct {
 		Address  string `default:"core.harbor.dked:30002"`
 		Admin    string `default:"admin"`
 		Password string `default:"Harbor12345"`
-		Project  string `default:"library"`
+		Project  string `default:"csmp"`
 	}
 }{}
 

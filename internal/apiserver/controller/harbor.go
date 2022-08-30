@@ -1,14 +1,18 @@
 package controller
 
 import (
+	"bytes"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 	"net/http"
 	"os"
+	"os/exec"
 	"path"
+	"strings"
 	"time"
 	"upserver/internal/pkg/constant"
 	"upserver/internal/pkg/harbor"
+	"upserver/internal/pkg/k8s"
 	"upserver/internal/pkg/service"
 	"upserver/internal/pkg/utils"
 )
@@ -64,6 +68,7 @@ func (hc HarborController) ListArtifacts(c *gin.Context) {
 func (hc HarborController) Upload(c *gin.Context) {
 	file, err := c.FormFile("file")
 	if err != nil {
+		log.WithField("上传获取文件失败",err).Error("上传文件失败")
 		c.JSON(http.StatusBadRequest, constant.RequestParamErr)
 		return
 	}
@@ -86,21 +91,32 @@ func (hc HarborController) Upload(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, err.Error())
 		return
 	}
-	c.JSON(http.StatusOK,nil)
 	constant.HarborPushed = 0
-	return
-	////解压缩升级包
-	//utils.UnzipDir(fullName, utils.Config.Path+dirName)
-	//files := strings.Split(file.Filename, "_")
-	////要上传到的harbor项目名称
-	//projectName := files[0]
-	////解压后的路径
-	//dirPath := utils.Config.Path + dirName + utils.UnExt(file.Filename)
-	////解压后处理解压后的文件
-	//err = harborService.DealFile(projectName, dirPath)
-	//if err != nil {
-	//	c.JSON(http.StatusInternalServerError, err.Error())
-	//	return
-	//}
+	//c.JSON(http.StatusOK, nil)
+	////上传成功后先返回成功，再解压缩和推送私有仓库
+	////return
+	//解压缩升级包
+	utils.UnzipDir(fullName, utils.Config.Path+dirName)
+	files := strings.Split(file.Filename, "_")
+	//要上传到的harbor项目名称
+	projectName := files[0]
+	//解压后的路径
+	dirPath := utils.Config.Path + dirName + utils.UnExt(file.Filename)
+	//解压后处理解压后的文件
+	service.Init()
+	err = harborService.DealFile(projectName, dirPath)
+	if err == nil {
+		constant.HarborPushed = 1
+		//c.JSON(http.StatusInternalServerError, err.Error())
+		//return
+	}
 
+	//更新应用仓库
+	_ = k8s.GetAndUpdateRepo("")
+	c.JSON(http.StatusOK, nil)
+	//TODO 推送到harbor完成，删除镜像包
+	var stderr bytes.Buffer
+	cmd := exec.Command("rm -rf /tmp/*")
+	cmd.Stderr = &stderr
+	err = cmd.Run()
 }

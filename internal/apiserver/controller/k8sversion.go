@@ -108,6 +108,8 @@ func (kv K8sVersionController) UpdateVersion(c *gin.Context) {
 	if reqData.Namespace == "" {
 		reqData.Namespace = utils.K8sConfig.K8s.Namespace
 	}
+	//更新应用仓库
+	_ = k8s.GetAndUpdateRepo(reqData.Workspace)
 
 	appAndVersion, err := k8sService.GetAppAndVersion(reqData.Workspace, reqData.Namespace)
 	if err != nil {
@@ -154,5 +156,49 @@ func (kv K8sVersionController) UpdateVersion(c *gin.Context) {
 	c.JSON(http.StatusOK, msg)
 	//TODO 升级失败
 	//cluster.status = failed
+
+}
+
+// GetVersionList
+// @description: 获取版本列表
+// @param:
+// @author: GJing
+// @email: guojing@tna.cn
+// @date: 2022/8/30 10:05
+// @success:
+func (kv K8sVersionController) GetVersionList(c *gin.Context) {
+	var reqData model.GetVersionRequest
+
+	workspace := c.Query("workspace")
+	reqData.Workspace = utils.String(workspace)
+	namespace := c.Query("namespace")
+	reqData.Namespace = utils.String(namespace)
+	//前端未传企业空间和项目则使用配置文件中的
+	if reqData.Workspace == "" {
+		reqData.Workspace = utils.K8sConfig.K8s.Workspace
+	}
+	if reqData.Namespace == "" {
+		reqData.Namespace = utils.K8sConfig.K8s.Namespace
+	}
+	//更新应用仓库
+	_ = k8s.GetAndUpdateRepo("")
+	var k8sService service.K8sService
+	appAndVersion, err := k8sService.GetAppAndVersion(reqData.Workspace, reqData.Namespace)
+	if err != nil {
+		log.WithFields(log.Fields{"err": err, "namespace": reqData.Namespace, "workspace": reqData.Workspace}).
+			Error("获取k8s应用列表错误")
+		c.JSON(http.StatusInternalServerError, err)
+		return
+	}
+
+	//获取版本信息
+	var res model.GetVersionListResponse
+	res.Appid = appAndVersion.App.Items[0].App.AppId
+	currentVersions := strings.Split(appAndVersion.App.Items[0].Version.Name, " ")
+	res.NowVersion = currentVersions[0]
+	res.Items = appAndVersion.Version.Items
+	res.TotalCount = appAndVersion.Version.TotalCount
+
+	c.JSON(http.StatusOK, res)
 
 }
