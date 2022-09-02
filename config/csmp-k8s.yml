@@ -1,7 +1,7 @@
 apisix:
   url: http://127.0.0.1:9080
 k8s:
-  url: http://114.116.45.89:31326
+  url: http://192.168.0.80:31601
   namespace: csmp
   workspace: dked
   username: csmp

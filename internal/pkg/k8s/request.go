@@ -28,7 +28,6 @@ var (
 func TokenRequestTimeout(method, url string, reqData url.Values, res interface{}, d time.Duration) (sc int, err error) {
 	var resp *http.Response
 	sc = -1
-
 	client := &http.Client{
 		Timeout: d,
 	}
@@ -156,7 +155,7 @@ func JsonRestRequestTimeout(method, url string, req, res interface{}, d time.Dur
 	sc = -1
 	if req != nil {
 		data, err = json.Marshal(req)
-		fmt.Println("-------",string(data))
+		fmt.Println("===========reqdata===",string(data))
 		if err != nil {
 			return
 		}
@@ -169,8 +168,6 @@ func JsonRestRequestTimeout(method, url string, req, res interface{}, d time.Dur
 		resp, err = client.Get(url)
 	}  else {
 		var req *http.Request
-		fmt.Println("url",url)
-		fmt.Println("method",method)
 		req, err = http.NewRequest(method, url, reader)
 		if err != nil {
 			return
@@ -180,11 +177,16 @@ func JsonRestRequestTimeout(method, url string, req, res interface{}, d time.Dur
 		resp, err = client.Do(req)
 	}
 	if err != nil {
+		fmt.Println("==err==",err)
 		return
 	}
 	defer resp.Body.Close()
 	sc = resp.StatusCode
 	if (sc != http.StatusNotAcceptable) && (sc < http.StatusOK || sc >= http.StatusMultipleChoices) {
+		data1, err1 := ioutil.ReadAll(resp.Body)
+		fmt.Println("data",string(data1))
+		fmt.Println("err1",err1)
+
 		err = syscall.EINVAL
 		return
 	}

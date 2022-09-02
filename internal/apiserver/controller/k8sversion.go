@@ -27,7 +27,8 @@ var k8sService service.K8sService
 // @success:
 func (kv K8sVersionController) GetVersion(c *gin.Context) {
 	var reqData model.GetVersionRequest
-
+	//更新应用仓库
+	_ = k8s.GetAndUpdateRepo("")
 	workspace := c.Query("workspace")
 	reqData.Workspace = utils.String(workspace)
 	namespace := c.Query("namespace")

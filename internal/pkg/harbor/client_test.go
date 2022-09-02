@@ -26,3 +26,7 @@ func TestRepoList(t *testing.T) {
 func TestGetRepository(t *testing.T) {
 	ListArtifacts("csmp-backend")
 }
+
+func TestCreateProject(t *testing.T) {
+	CreateProject("test")
+}
