@@ -3,6 +3,7 @@ package k8s
 import (
 	"encoding/base64"
 	"errors"
+	"fmt"
 	log "github.com/sirupsen/logrus"
 	"net/http"
 	"net/url"
@@ -177,7 +178,6 @@ func GetRepoList(workspaces string) (res *AppRepoResponse, err error) {
 	return
 }
 
-
 // UpdateRepo
 // @description: 更新仓库
 // @param:
@@ -224,4 +224,205 @@ func GetAndUpdateRepo(workspaces string) error {
 		}
 	}
 	return nil
+}
+
+// CreateWorkspaces
+// @description: 创建企业空间
+// @param: name string 要创建的企业空间名称
+// @param: desc string 企业空间描述
+// @author: GJing
+// @email: guojing@tna.cn
+// @date: 2022/8/30 20:16
+// @success:l
+func CreateWorkspaces(name, aliasName, desc string) error {
+	reqUrl := utils.K8sConfig.K8s.Url + "/kapis/tenant.kubesphere.io/v1alpha2/workspaces"
+	reqData := NewCreateWorkspacesRequest(name, aliasName, desc)
+
+	httpCode, err := JsonRestRequestTimeout("POST", reqUrl, reqData, nil, time.Second*10)
+	if err != nil || httpCode != http.StatusOK {
+		log.WithFields(log.Fields{"err": err, "reqUrl": reqUrl, "res": nil}).Info("创建企业空间失败")
+		return err
+	}
+	return nil
+}
+
+// CreateProject
+// @description: 创建企业空间下的项目
+// @param:
+// @author: GJing
+// @email: guojing@tna.cn
+// @date: 2022/9/1 10:41
+// @success:
+func CreateProject(name, workspace, aliasName, desc string) error {
+	reqData := NewCreateProjectRequest(name, aliasName, desc, workspace)
+	reqUrl := utils.K8sConfig.K8s.Url + "/kapis/tenant.kubesphere.io/v1alpha2/workspaces/" + workspace + "/namespaces"
+
+	httpCode, err := JsonRestRequestTimeout("POST", reqUrl, reqData, nil, time.Second*10)
+	if err != nil || httpCode != http.StatusOK {
+		log.WithFields(log.Fields{"httpCode": httpCode, "err": err, "reqUrl": reqUrl, "res": nil}).Error("创建项目失败")
+		return err
+	}
+	return nil
+}
+
+// CreateRepos
+// @description: 添加应用仓库
+// @param: workspace string 要添加到的企业空间
+// @param: repoName string 应用仓库名称
+// @param: projectName string 私有仓库中的项目名称
+// @author: GJing
+// @email: guojing@tna.cn
+// @date: 2022/9/1 18:03
+// @success:
+func CreateRepos(workspace, repoName, projectName string) error {
+	reqData := NewCreateRepoRequest(repoName, projectName)
+	reqUrl := utils.K8sConfig.K8s.Url + "/kapis/openpitrix.io/v1/workspaces/" + workspace + "/repos"
+	httpCode, err := JsonRestRequestTimeout("POST", reqUrl, reqData, nil, time.Second*10)
+	if err != nil || httpCode != http.StatusOK {
+		log.WithFields(log.Fields{"httpCode": httpCode, "err": err, "reqUrl": reqUrl, "res": nil}).Info("创建应用仓库失败")
+		return err
+	}
+	return nil
+}
+
+// GetRepoApps
+// @description: 获取应用仓库下的应用
+// @param:
+// @author: GJing
+// @email: guojing@tna.cn
+// @date: 2022/9/2 11:39
+// @success:
+func GetRepoApps(repoId string) (res *ReposAppsResponse, err error) {
+	//reqUrl := utils.K8sConfig.K8s.Url + "/kapis/openpitrix.io/v1/apps?orderBy=create_time&paging=limit%3D12%2Cpage%3D1&conditions=status%3Dactive%2Crepo_id%3Drepo-95x39n214x9p1o&reverse=true"
+	reqUrl := utils.K8sConfig.K8s.Url + "/kapis/openpitrix.io/v1/apps?orderBy=create_time&conditions=repo_id=" + repoId
+
+	httpCode, err1 := JsonRequestTimeout("GET", reqUrl, nil, &res, time.Second*10)
+	if err1 != nil || httpCode != http.StatusOK {
+		log.WithField("err", err1).Info("获取应用仓库应用失败")
+		return res, errors.New("获取应用仓库应用失败")
+	}
+
+	return
+}
+
+// CreateApp
+// @description: 创建项目中的应用
+// @param:
+// @author: GJing
+// @email: guojing@tna.cn
+// @date: 2022/9/2 14:39
+// @success:
+func CreateApp(workspace, namespace, appName string) error {
+	fmt.Println("-----------",workspace,"---",namespace,"------",appName)
+	//获取仓库列表
+	repos, err := GetRepoList(workspace)
+	if err != nil {
+		log.WithField("err", err).Error("获取应用仓库列表失败")
+		return err
+	}
+	if len(repos.Items) <= 0 {
+		errs := "当前项目未添加应用仓库"
+		log.WithField("err", errs).Error(errs)
+		return errors.New(errs)
+	}
+	repoId := repos.Items[0].RepoId
+	//更新应用仓库
+	UpdateRepo(workspace, repoId)
+	//获取应用仓库中的应用
+	apps, err := GetRepoApps(repoId)
+	if err != nil {
+		log.WithField("err", err).Error("获取应用仓库中的应用失败")
+		return err
+	}
+	if len(apps.Items) <= 0 {
+		errs := "harbor中的该项目没有对应的helm应用"
+		log.WithField("err", errs).Error(errs)
+		return errors.New(errs)
+	}
+
+	appid := apps.Items[0].Appid
+	versionId := apps.Items[0].LatestAppVersion.VersionId
+	//获取version helm yaml内容
+	conf, err := Files(appid, versionId)
+	if err != nil {
+		log.WithField("err", err).Error("获取应用对应的helm文件信息错误")
+		return err
+	}
+	//开始创建应用，部署实际项目
+	err = CreateProjectApp(workspace, namespace, appid, versionId, conf, appName)
+	if err != nil {
+		log.WithField("err", err).Error("创建实际应用出错")
+		return err
+	}
+	return err
+}
+
+// CreateProjectApp
+// @description: 创建开发的实际项目应用。企业空间-项目-应用
+// @param:
+// @author: GJing
+// @email: guojing@tna.cn
+// @date: 2022/9/2 14:36
+// @success:
+func CreateProjectApp(workspace, namespace, appid, versionId, conf, name string) error {
+	reqData := CreateProjectAppRequest{
+		appid,
+		conf,
+		name,
+		versionId,
+	}
+	reqUrl := utils.K8sConfig.K8s.Url + fmt.Sprintf("/kapis/openpitrix.io/v1/workspaces/%s/namespaces/%s/applications", workspace, namespace)
+	httpCode, err := JsonRestRequestTimeout("POST", reqUrl, reqData, nil, time.Second*10)
+	if err != nil || httpCode != http.StatusOK {
+		log.WithFields(log.Fields{"httpCode": httpCode, "err": err, "reqUrl": reqUrl, "res": nil}).Info("创建项目失败")
+		return err
+	}
+	return nil
+}
+
+type Create struct {
+	Workspace          string
+	Namespace          string
+	ProjectName        string
+	RepoName           string
+	RepoProjectName    string
+	WorkspaceAliasName string
+	WorkspaceDesc      string
+	ProjectAliasName   string
+	ProjectDesc        string
+	AppName            string
+}
+
+// CreateAll
+// @description: 创建企业空间，项目，应用仓库，应用
+// @param:
+// @author: GJing
+// @email: guojing@tna.cn
+// @date: 2022/9/2 18:43
+// @success:
+func CreateAll(c *Create) (err error) {
+	err = CreateWorkspaces(c.Workspace, c.WorkspaceAliasName, c.WorkspaceDesc)
+	if err != nil {
+		log.WithField("err", err).Error("创建企业空间失败")
+		return
+	}
+	time.Sleep(time.Second)
+	err = CreateProject(c.Namespace, c.Workspace, c.ProjectAliasName, c.ProjectDesc)
+	if err != nil {
+		log.WithField("err", err).Error("创建企业空间中的项目")
+		return
+	}
+	time.Sleep(time.Second)
+	err = CreateRepos(c.Workspace, c.RepoName, c.RepoProjectName)
+	if err != nil {
+		log.WithField("err", err).Error("创建企业空间中的应用仓库失败")
+		return
+	}
+	time.Sleep(time.Second)
+	err = CreateApp(c.Workspace, c.Namespace, c.AppName)
+	if err != nil {
+		log.WithField("err", err).Error("创建企业空间中的应用失败")
+		return
+	}
+	return
 }

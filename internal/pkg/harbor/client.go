@@ -3,10 +3,13 @@ package harbor
 import (
 	"context"
 	"errors"
+	"fmt"
 	"github.com/goharbor/go-client/pkg/harbor"
 	"github.com/goharbor/go-client/pkg/sdk/assist/client/chart_repository"
 	"github.com/goharbor/go-client/pkg/sdk/v2.0/client/artifact"
+	"github.com/goharbor/go-client/pkg/sdk/v2.0/client/project"
 	"github.com/goharbor/go-client/pkg/sdk/v2.0/client/repository"
+	"github.com/goharbor/go-client/pkg/sdk/v2.0/models"
 	log "github.com/sirupsen/logrus"
 	"os"
 	"upserver/internal/pkg/utils"
@@ -56,7 +59,7 @@ func UploadChart(chartPath string) (bool, error) {
 	params := &chart_repository.PostChartrepoRepoChartsParams{
 		Chart: file,
 		//Repo:  constant.HarborProject,
-		Repo:  utils.K8sConfig.Harbor.Project,
+		Repo: utils.K8sConfig.Harbor.Project,
 	}
 
 	ok, err := clientV1.ChartRepository.PostChartrepoRepoCharts(context.TODO(), params)
@@ -78,7 +81,7 @@ func UploadChart(chartPath string) (bool, error) {
 // @email: guojing@tna.cn
 // @date: 2022/7/25 16:54
 // @success:
-func ListRepositories() (res *repository.ListRepositoriesOK,err error) {
+func ListRepositories() (res *repository.ListRepositoriesOK, err error) {
 	c, err := Client()
 	if err != nil {
 		return res, err
@@ -89,7 +92,7 @@ func ListRepositories() (res *repository.ListRepositoriesOK,err error) {
 	}
 	res, err = clientV2.Repository.ListRepositories(context.TODO(), params)
 	if err != nil {
-		log.WithField("err",err).Error("获取镜像仓库列表错误")
+		log.WithField("err", err).Error("获取镜像仓库列表错误")
 	}
 	return
 	//fmt.Println("err===", err)
@@ -107,7 +110,7 @@ func ListRepositories() (res *repository.ListRepositoriesOK,err error) {
 // @email: guojing@tna.cn
 // @date: 2022/7/25 17:57
 // @success:
-func ListArtifacts(repoName string) (res *artifact.ListArtifactsOK,err  error) {
+func ListArtifacts(repoName string) (res *artifact.ListArtifactsOK, err error) {
 	c, err := Client()
 	if err != nil {
 		return res, err
@@ -119,7 +122,7 @@ func ListArtifacts(repoName string) (res *artifact.ListArtifactsOK,err  error) {
 	}
 	res, err = clientV2.Artifact.ListArtifacts(context.TODO(), params)
 	if err != nil {
-		log.WithField("err",err).Error("获取镜像列表错误")
+		log.WithField("err", err).Error("获取镜像列表错误")
 	}
 	return
 	//fmt.Println("err===", err)
@@ -130,5 +133,22 @@ func ListArtifacts(repoName string) (res *artifact.ListArtifactsOK,err  error) {
 	//	}
 	//
 	//}
+}
 
+func CreateProject(projectName string) {
+	c, err := Client()
+	if err != nil {
+		log.WithField("=============err", err)
+	}
+	clientV2 := c.V2()
+	var public = true
+	req := models.ProjectReq{
+		ProjectName: projectName,
+		Public:      &public,
+	}
+	params := &project.CreateProjectParams{
+		Project: &req,
+	}
+	res, err  := clientV2.Project.CreateProject(context.TODO(), params)
+	fmt.Println("res",res,"err",err)
 }

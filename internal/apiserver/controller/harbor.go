@@ -103,7 +103,6 @@ func (hc HarborController) Upload(c *gin.Context) {
 	//解压后的路径
 	dirPath := utils.Config.Path + dirName + utils.UnExt(file.Filename)
 	//解压后处理解压后的文件
-	service.Init()
 	err = harborService.DealFile(projectName, dirPath)
 	if err == nil {
 		constant.HarborPushed = 1

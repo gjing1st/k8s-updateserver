@@ -33,15 +33,15 @@ var Config = struct {
 var K8sConfig = struct {
 	K8s struct {
 		//Url string `default:"http://ks-apiserver.kubesphere-system.svc"`
-		Url        string `default:"http://192.168.0.3:30532"`
+		Url        string `default:"http://192.168.0.80:31601"`
 		Namespace string `default:"csmp"`
 		Workspace string `default:"dked"`
 		Username  string `default:"csmp"`
 		Password  string `default:"Dked@213"`
 	}
 	Harbor struct {
-		//Address  string `default:"dockerhub.dked.local:30002"`
-		Address  string `default:"core.harbor.dked:30002"`
+		//Address  string `default:"core.harbor.dked:30002"`
+		Address  string `default:"http://192.168.0.80:30002"`
 		Admin    string `default:"admin"`
 		Password string `default:"Harbor12345"`
 		Project  string `default:"csmp"`

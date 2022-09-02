@@ -1,5 +1,7 @@
 package k8s
 
+import "time"
+
 type TokenRequest struct {
 	GrantType    string `json:"grant_type"`
 	Username     string `json:"username"`
@@ -108,4 +110,160 @@ type AppRepoResponse struct {
 
 type UpdateRequest struct {
 	Action string `json:"action"`
+}
+
+//CreateWorkspacesRequest 创建企业空间请求参数
+type CreateWorkspacesRequest struct {
+	ApiVersion string `json:"apiVersion"`
+	Kind       string `json:"kind"`
+	Metadata   `json:"metadata"`
+	Spec       `json:"spec"`
+}
+
+type Metadata struct {
+	Name        string `json:"name"`
+	Annotations `json:"annotations"`
+}
+type Annotations struct {
+	AliasName   string `json:"kubesphere.io/alias-name"`
+	Creator     string `json:"kubesphere.io/creator"`
+	Description string `json:"kubesphere.io/description"`
+}
+type Spec struct {
+	Template `json:"template"`
+}
+type Template struct {
+	TemplateSpec `json:"spec"`
+}
+type TemplateSpec struct {
+	Manager string `json:"manager"`
+}
+
+// NewCreateWorkspacesRequest
+// @description: 初始化创建企业空间请求参数
+// @param:
+// @author: GJing
+// @email: guojing@tna.cn
+// @date: 2022/8/30 20:45
+// @success:
+func NewCreateWorkspacesRequest(name, aliasName, desc string) (req CreateWorkspacesRequest) {
+	spec := Spec{
+		Template{
+			TemplateSpec{
+				Manager: "admin",
+			},
+		},
+	}
+	metadata := Metadata{
+		name,
+		Annotations{
+			AliasName:   aliasName,
+			Creator:     "admin",
+			Description: desc,
+		},
+	}
+	req = CreateWorkspacesRequest{
+		"tenant.kubesphere.io/v1alpha2",
+		"WorkspaceTemplate",
+		metadata,
+		spec,
+	}
+	return req
+}
+
+type CreateProjectRequest struct {
+	ApiVersion            string `json:"apiVersion"`
+	Kind                  string `json:"kind"`
+	CreateProjectMetadata `json:"metadata"`
+}
+
+type CreateProjectMetadata struct {
+	Name                string `json:"name"`
+	Annotations         `json:"annotations"`
+	CreateProjectLabels `json:"labels"`
+}
+type CreateProjectLabels struct {
+	Workspace string `json:"kubesphere.io/workspace"`
+}
+
+// NewCreateProjectRequest
+// @description: 创建项目初始化请求参数
+// @param:
+// @author: GJing
+// @email: guojing@tna.cn
+// @date: 2022/9/1 10:39
+// @success:
+func NewCreateProjectRequest(name, aliasName, desc, workspace string) (req CreateProjectRequest) {
+	labels := CreateProjectLabels{
+		workspace,
+	}
+	annotations := Annotations{
+		aliasName,
+		"admin",
+		desc,
+	}
+	metadata := CreateProjectMetadata{
+		name,
+		annotations,
+		labels,
+	}
+	req = CreateProjectRequest{
+		"v1",
+		"Namespace",
+		metadata,
+	}
+	return
+}
+
+//CreateRepoRequest 创建应用仓库请求体
+type CreateRepoRequest struct {
+	Status     string   `json:"app_default_status"`
+	Credential string   `json:"credential"`
+	Name       string   `json:"name"`
+	Providers  []string `json:"providers"`
+	RepoType   string   `json:"repoType"`
+	SyncPeriod string   `json:"sync_period"`
+	Type       string   `json:"type"`
+	Url        string   `json:"url"`
+	Visibility string   `json:"visibility"`
+}
+
+func NewCreateRepoRequest(repoName, projectName string) (req CreateRepoRequest) {
+	providers := []string{"kubernetes"}
+	req = CreateRepoRequest{
+		"active",
+		"{}",
+		repoName,
+		providers,
+		"Helm",
+		"30m",
+		"http",
+		"http://core.harbor.dked:30002/chartrepo/" + projectName,
+		"public",
+	}
+	return req
+}
+
+type ReposAppsResponse struct {
+	Items []struct {
+		Appid            string `json:"app_id"`
+		Name             string `json:"name"`
+		LatestAppVersion struct {
+			Appid       string    `json:"app_id"`
+			Name        string    `json:"name"`
+			PackageName string    `json:"package_name"`
+			UpdateTime  time.Time `json:"update_time"`
+			VersionId   string    `json:"version_id"`
+		} `json:"latest_app_version"`
+		RepoId string `json:"repo_id"`
+		Url    string `json:"url"`
+	} `json:"items"`
+	TotalCount int `json:"total_count"`
+}
+//CreateProjectAppRequest 创建实际应用项目请求参数
+type CreateProjectAppRequest struct {
+	Appid     string `json:"app_id"`
+	Conf      string `json:"conf"`
+	Name      string `json:"name"`
+	VersionId string `json:"version_id"`
 }

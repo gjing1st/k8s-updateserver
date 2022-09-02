@@ -5,16 +5,25 @@
 //@Description: 公共函数库
 
 package utils
+
 import (
 	"archive/zip"
+	"bufio"
+	"bytes"
 	"crypto/md5"
 	"encoding/hex"
+	"errors"
+	"fmt"
+	"golang.org/x/crypto/ssh"
 	"io"
 	"log"
 	"math"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strconv"
+	"strings"
+	"sync"
 )
 
 // Md5
@@ -150,6 +159,7 @@ func UnzipDir(zipFile, dir string) {
 		}()
 	}
 }
+// Round
 // @description: 四舍五入保留n位小数
 // @param:f 需要处理的float数
 // @param:n 需要保留的小数位数
@@ -211,4 +221,141 @@ func UnExt(fileName string) string {
 		}
 	}
 	return ""
+}
+type connection struct {
+	mu         sync.Mutex
+	sshclient  *ssh.Client
+}
+func (c *connection) session() (*ssh.Session, error) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
+	if c.sshclient == nil {
+		return nil, errors.New("connection closed")
+	}
+
+	sess, err := c.sshclient.NewSession()
+	if err != nil {
+		return nil, err
+	}
+
+	modes := ssh.TerminalModes{
+		ssh.ECHO:          0,     // disable echoing
+		ssh.TTY_OP_ISPEED: 14400, // input speed = 14.4kbaud
+		ssh.TTY_OP_OSPEED: 14400, // output speed = 14.4kbaud
+	}
+
+	err = sess.RequestPty("xterm", 100, 50, modes)
+	if err != nil {
+		return nil, err
+	}
+
+	return sess, nil
+}
+
+type Host struct {
+	IP string
+	Password string
+	User string
+}
+func (c *connection) Exec(cmd string,host Host) (stdout string, code int, err error) {
+	sess, err := c.session()
+	if err != nil {
+		return "", 1, errors.New("failed to get SSH session")
+	}
+	defer sess.Close()
+
+	exitCode := 0
+
+	in, _ := sess.StdinPipe()
+	out, _ := sess.StdoutPipe()
+
+	err = sess.Start(strings.TrimSpace(cmd))
+	if err != nil {
+		exitCode = -1
+		if exitErr, ok := err.(*ssh.ExitError); ok {
+			exitCode = exitErr.ExitStatus()
+		}
+		return "", exitCode, err
+	}
+
+	var (
+		output []byte
+		line   = ""
+		r      = bufio.NewReader(out)
+	)
+
+	for {
+		b, err := r.ReadByte()
+		if err != nil {
+			break
+		}
+
+		output = append(output, b)
+
+		if b == byte('\n') {
+			line = ""
+			continue
+		}
+
+		line += string(b)
+
+		if (strings.HasPrefix(line, "[sudo] password for ") || strings.HasPrefix(line, "Password")) && strings.HasSuffix(line, ": ") {
+			_, err = in.Write([]byte(host.Password + "\n"))
+			if err != nil {
+				break
+			}
+		}
+	}
+	err = sess.Wait()
+	if err != nil {
+		exitCode = -1
+		if exitErr, ok := err.(*ssh.ExitError); ok {
+			exitCode = exitErr.ExitStatus()
+		}
+	}
+	outStr := strings.TrimPrefix(string(output), fmt.Sprintf("[sudo] password for %s:", host.User))
+
+	// preserve original error
+	return strings.TrimSpace(outStr), exitCode, errors.New(fmt.Sprintf( "Failed to exec command: %s \n%s", cmd, strings.TrimSpace(outStr)))
+}
+// RunCommand
+// @description: 运行系统命令
+// @param: cmdStr 要运行的命令
+// @author: GJing
+// @email: guojing@tna.cn
+// @date: 2022/9/2 17:46
+// @success:
+func RunCommand(name string, arg ...string)(err error)  {
+	cmd := exec.Command(name,arg...)
+	var stderr bytes.Buffer
+	cmd.Stderr = &stderr
+	err = cmd.Run()
+	if err != nil {
+		log.Println("运行系统命令错误", err)
+		return
+	}
+	return
+}
+
+// WriteFile
+// @description:
+// @param:
+// @author: GJing
+// @email: guojing@tna.cn
+// @date: 2022/9/2 17:52
+// @success:
+func WriteFile(fileName,s string) (err error) {
+	file, err := os.OpenFile(fileName, os.O_WRONLY|os.O_CREATE, os.ModePerm)
+	if err != nil {
+		log.Println("文件打开失败", err)
+		return
+	}
+	//及时关闭file句柄
+	defer file.Close()
+	//写入文件时，使用带缓存的 *Writer
+	write := bufio.NewWriter(file)
+	_,err = write.WriteString(s)
+	write.Flush()
+	return
 }
