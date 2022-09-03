@@ -128,7 +128,7 @@ func UnzipDir(zipFile, dir string) {
 
 	r, err := zip.OpenReader(zipFile)
 	if err != nil {
-		log.Println("zipFile",zipFile)
+		log.Println("zipFile", zipFile)
 		log.Fatalf("Open zip file failed: %s\n", err.Error())
 	}
 	defer r.Close()
@@ -159,6 +159,7 @@ func UnzipDir(zipFile, dir string) {
 		}()
 	}
 }
+
 // Round
 // @description: 四舍五入保留n位小数
 // @param:f 需要处理的float数
@@ -173,19 +174,19 @@ func Round(f float64, n int) float64 {
 }
 
 // Div 数字转字母
-func Div(Num int)  string{
-	var(
-		Str string = ""
-		k int
-		temp []int   //保存转化后每一位数据的值，然后通过索引的方式匹配A-Z
+func Div(Num int) string {
+	var (
+		Str  string = ""
+		k    int
+		temp []int //保存转化后每一位数据的值，然后通过索引的方式匹配A-Z
 	)
 	//用来匹配的字符A-Z
-	Slice := []string{"","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O",
-		"P","Q","R","S","T","U","V","W","X","Y","Z"}
+	Slice := []string{"", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O",
+		"P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"}
 
-	if Num >26 {  //数据大于26需要进行拆分
+	if Num > 26 { //数据大于26需要进行拆分
 		for {
-			k = Num % 26  //从个位开始拆分，如果求余为0，说明末尾为26，也就是Z，如果是转化为26进制数，则末尾是可以为0的，这里必须为A-Z中的一个
+			k = Num % 26 //从个位开始拆分，如果求余为0，说明末尾为26，也就是Z，如果是转化为26进制数，则末尾是可以为0的，这里必须为A-Z中的一个
 			if k == 0 {
 				temp = append(temp, 26)
 				k = 26
@@ -193,15 +194,15 @@ func Div(Num int)  string{
 				temp = append(temp, k)
 			}
 			Num = (Num - k) / 26 //减去Num最后一位数的值，因为已经记录在temp中
-			if Num <= 26{   //小于等于26直接进行匹配，不需要进行数据拆分
+			if Num <= 26 {       //小于等于26直接进行匹配，不需要进行数据拆分
 				temp = append(temp, Num)
 				break
 			}
 		}
-	}else{
+	} else {
 		return Slice[Num]
 	}
-	for _,value := range temp{
+	for _, value := range temp {
 		Str = Slice[value] + Str //因为数据切分后存储顺序是反的，所以Str要放在后面
 	}
 	return Str
@@ -222,10 +223,12 @@ func UnExt(fileName string) string {
 	}
 	return ""
 }
+
 type connection struct {
-	mu         sync.Mutex
-	sshclient  *ssh.Client
+	mu        sync.Mutex
+	sshclient *ssh.Client
 }
+
 func (c *connection) session() (*ssh.Session, error) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
@@ -254,11 +257,12 @@ func (c *connection) session() (*ssh.Session, error) {
 }
 
 type Host struct {
-	IP string
+	IP       string
 	Password string
-	User string
+	User     string
 }
-func (c *connection) Exec(cmd string,host Host) (stdout string, code int, err error) {
+
+func (c *connection) Exec(cmd string, host Host) (stdout string, code int, err error) {
 	sess, err := c.session()
 	if err != nil {
 		return "", 1, errors.New("failed to get SSH session")
@@ -317,8 +321,9 @@ func (c *connection) Exec(cmd string,host Host) (stdout string, code int, err er
 	outStr := strings.TrimPrefix(string(output), fmt.Sprintf("[sudo] password for %s:", host.User))
 
 	// preserve original error
-	return strings.TrimSpace(outStr), exitCode, errors.New(fmt.Sprintf( "Failed to exec command: %s \n%s", cmd, strings.TrimSpace(outStr)))
+	return strings.TrimSpace(outStr), exitCode, errors.New(fmt.Sprintf("Failed to exec command: %s \n%s", cmd, strings.TrimSpace(outStr)))
 }
+
 // RunCommand
 // @description: 运行系统命令
 // @param: cmdStr 要运行的命令
@@ -326,13 +331,13 @@ func (c *connection) Exec(cmd string,host Host) (stdout string, code int, err er
 // @email: guojing@tna.cn
 // @date: 2022/9/2 17:46
 // @success:
-func RunCommand(name string, arg ...string)(err error)  {
-	cmd := exec.Command(name,arg...)
+func RunCommand(name string, arg ...string) (err error) {
+	cmd := exec.Command(name, arg...)
 	var stderr bytes.Buffer
 	cmd.Stderr = &stderr
 	err = cmd.Run()
 	if err != nil {
-		log.Println("运行系统命令错误", err)
+		log.Println("运行系统命令错误", err, ":", stderr.String())
 		return
 	}
 	return
@@ -345,7 +350,7 @@ func RunCommand(name string, arg ...string)(err error)  {
 // @email: guojing@tna.cn
 // @date: 2022/9/2 17:52
 // @success:
-func WriteFile(fileName,s string) (err error) {
+func WriteFile(fileName, s string) (err error) {
 	file, err := os.OpenFile(fileName, os.O_WRONLY|os.O_CREATE, os.ModePerm)
 	if err != nil {
 		log.Println("文件打开失败", err)
@@ -355,7 +360,7 @@ func WriteFile(fileName,s string) (err error) {
 	defer file.Close()
 	//写入文件时，使用带缓存的 *Writer
 	write := bufio.NewWriter(file)
-	_,err = write.WriteString(s)
+	_, err = write.WriteString(s)
 	write.Flush()
 	return
 }

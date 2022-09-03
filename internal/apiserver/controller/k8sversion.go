@@ -35,10 +35,10 @@ func (kv K8sVersionController) GetVersion(c *gin.Context) {
 	reqData.Namespace = utils.String(namespace)
 	//前端未传企业空间和项目则使用配置文件中的
 	if reqData.Workspace == "" {
-		reqData.Workspace = utils.K8sConfig.K8s.Workspace
+		reqData.Workspace = utils.K8sConfig.K8s.Workspace.Name
 	}
 	if reqData.Namespace == "" {
-		reqData.Namespace = utils.K8sConfig.K8s.Namespace
+		reqData.Namespace = utils.K8sConfig.K8s.Namespace.Name
 	}
 	var k8sService service.K8sService
 	appAndVersion, err := k8sService.GetAppAndVersion(reqData.Workspace, reqData.Namespace)
@@ -104,10 +104,10 @@ func (kv K8sVersionController) UpdateVersion(c *gin.Context) {
 
 	//前端未传企业空间和项目则使用配置文件中的
 	if reqData.Workspace == "" {
-		reqData.Workspace = utils.K8sConfig.K8s.Workspace
+		reqData.Workspace = utils.K8sConfig.K8s.Workspace.Name
 	}
 	if reqData.Namespace == "" {
-		reqData.Namespace = utils.K8sConfig.K8s.Namespace
+		reqData.Namespace = utils.K8sConfig.K8s.Namespace.Name
 	}
 	//更新应用仓库
 	_ = k8s.GetAndUpdateRepo(reqData.Workspace)
@@ -168,6 +168,11 @@ func (kv K8sVersionController) UpdateVersion(c *gin.Context) {
 // @date: 2022/8/30 10:05
 // @success:
 func (kv K8sVersionController) GetVersionList(c *gin.Context) {
+	//更新应用仓库
+	//for i := 0; i < 10; i++ {
+	//	_ = k8s.GetAndUpdateRepo("")
+	//	time.Sleep(time.Millisecond * 500)
+	//}
 	var reqData model.GetVersionRequest
 
 	workspace := c.Query("workspace")
@@ -176,18 +181,17 @@ func (kv K8sVersionController) GetVersionList(c *gin.Context) {
 	reqData.Namespace = utils.String(namespace)
 	//前端未传企业空间和项目则使用配置文件中的
 	if reqData.Workspace == "" {
-		reqData.Workspace = utils.K8sConfig.K8s.Workspace
+		reqData.Workspace = utils.K8sConfig.K8s.Workspace.Name
 	}
 	if reqData.Namespace == "" {
-		reqData.Namespace = utils.K8sConfig.K8s.Namespace
+		reqData.Namespace = utils.K8sConfig.K8s.Namespace.Name
 	}
 	//更新应用仓库
 	_ = k8s.GetAndUpdateRepo("")
-	var k8sService service.K8sService
 	appAndVersion, err := k8sService.GetAppAndVersion(reqData.Workspace, reqData.Namespace)
 	if err != nil {
 		log.WithFields(log.Fields{"err": err, "namespace": reqData.Namespace, "workspace": reqData.Workspace}).
-			Error("获取k8s应用列表错误")
+			Error("获取k8s应用列表错误1")
 		c.JSON(http.StatusInternalServerError, err)
 		return
 	}

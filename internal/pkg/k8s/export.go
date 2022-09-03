@@ -26,11 +26,11 @@ import (
 // @email: guojing@tna.cn
 // @date: 2022/9/1 17:28
 // @success:
-func Export(path, projectName, database, password string) {
+func Export(path, projectName, database, password, image string) {
 	ExportInitOS(path)
 	{
 		//导出mysql数据库相关yaml文件
-		ExportMysqlServer(path, projectName)
+		ExportMysqlServer(path, projectName, image)
 		ExportMysqlConf(path, projectName)
 		ExportMysqlSecret(path, projectName, database, password)
 	}
@@ -74,7 +74,7 @@ func ExportInitOS(tempPath string) {
 // @email: guojing@tna.cn
 // @date: 2022/8/31 16:38
 // @success:
-func ExportMysqlServer(tempPath, projectName string) {
+func ExportMysqlServer(tempPath, projectName, image string) {
 	fileName := tempPath + constant.MysqlName
 	file, err := os.OpenFile(fileName, os.O_WRONLY|os.O_CREATE, os.ModePerm)
 	if err != nil {
@@ -85,6 +85,7 @@ func ExportMysqlServer(tempPath, projectName string) {
 	//写入文件时，使用带缓存的 *Writer
 	write := bufio.NewWriter(file)
 	mysqlYaml := strings.Replace(tmpl.MysqlServer, "{{projectName}}", projectName, 2)
+	mysqlYaml = strings.Replace(mysqlYaml, "{{image}}", image, 1)
 	write.WriteString(mysqlYaml)
 	write.Flush()
 }
@@ -99,7 +100,7 @@ func ExportMysqlServer(tempPath, projectName string) {
 func ExportMysqlConf(tempPath, projectName string) {
 	fileName := tempPath + constant.MysqlConfName
 	mysqlYaml := strings.Replace(tmpl.MysqlConf, "{{projectName}}", projectName, 2)
-	utils.WriteFile(fileName,mysqlYaml)
+	utils.WriteFile(fileName, mysqlYaml)
 }
 
 // ExportMysqlSecret
@@ -119,8 +120,9 @@ func ExportMysqlSecret(tempPath, projectName, database, password string) {
 	mysqlYaml = strings.Replace(mysqlYaml, "{{database}}", database, 1)
 	password = base64.StdEncoding.EncodeToString([]byte(password))
 	mysqlYaml = strings.Replace(mysqlYaml, "{{password}}", password, 1)
-	utils.WriteFile(fileName,mysqlYaml)
+	utils.WriteFile(fileName, mysqlYaml)
 }
+
 // ExportConfPvc
 // @description: 导出conf 存储卷
 // @param:
@@ -128,40 +130,40 @@ func ExportMysqlSecret(tempPath, projectName, database, password string) {
 // @email: guojing@tna.cn
 // @date: 2022/9/2 17:53
 // @success:
-func ExportConfPvc(tempPath,projectName string)  {
+func ExportConfPvc(tempPath, projectName string) {
 	fileName := tempPath + constant.ConfPvc
 	pvcYaml := strings.Replace(tmpl.ConfPvc, "{{projectName}}", projectName, 2)
-	utils.WriteFile(fileName,pvcYaml)
+	utils.WriteFile(fileName, pvcYaml)
 }
 
-func ExportLibPvc(tempPath,projectName string)  {
+func ExportLibPvc(tempPath, projectName string) {
 	fileName := tempPath + constant.LibPvc
 	pvcYaml := strings.Replace(tmpl.LibPvc, "{{projectName}}", projectName, 2)
-	utils.WriteFile(fileName,pvcYaml)
+	utils.WriteFile(fileName, pvcYaml)
 }
 
-func ExportFrontendPvc(tempPath,projectName string)  {
+func ExportFrontendPvc(tempPath, projectName string) {
 	fileName := tempPath + constant.FrontendPvc
 	pvcYaml := strings.Replace(tmpl.FrontendPvc, "{{projectName}}", projectName, 2)
-	utils.WriteFile(fileName,pvcYaml)
+	utils.WriteFile(fileName, pvcYaml)
 }
 
-func ExportKmcPvc(tempPath,projectName string)  {
+func ExportKmcPvc(tempPath, projectName string) {
 	fileName := tempPath + constant.KmcPvc
 	pvcYaml := strings.Replace(tmpl.KmcPvc, "{{projectName}}", projectName, 2)
-	utils.WriteFile(fileName,pvcYaml)
+	utils.WriteFile(fileName, pvcYaml)
 }
 
-func ExportMysqlPvc(tempPath,projectName string)  {
+func ExportMysqlPvc(tempPath, projectName string) {
 	fileName := tempPath + constant.MysqlPvc
 	pvcYaml := strings.Replace(tmpl.MysqlPvc, "{{projectName}}", projectName, 2)
-	utils.WriteFile(fileName,pvcYaml)
+	utils.WriteFile(fileName, pvcYaml)
 }
 
-func ExportUpdatePvc(tempPath,projectName string)  {
+func ExportUpdatePvc(tempPath, projectName string) {
 	fileName := tempPath + constant.UpdatePvc
 	pvcYaml := strings.Replace(tmpl.UpdatePvc, "{{projectName}}", projectName, 2)
-	utils.WriteFile(fileName,pvcYaml)
+	utils.WriteFile(fileName, pvcYaml)
 }
 
 // ExportKubeConfig
@@ -171,10 +173,10 @@ func ExportUpdatePvc(tempPath,projectName string)  {
 // @email: guojing@tna.cn
 // @date: 2022/9/3 21:12
 // @success:
-func ExportKubeConfig(fileName string)  error{
-	if fileName == ""{
+func ExportKubeConfig(fileName string) error {
+	if fileName == "" {
 		fileName = constant.KubeConfigName
 	}
-	filePath:= "./" + fileName
-	return utils.WriteFile(filePath,tmpl.ConfigFile)
+	filePath := "./" + fileName
+	return utils.WriteFile(filePath, tmpl.ConfigFile)
 }

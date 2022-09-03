@@ -57,7 +57,8 @@ func (ds DockerService) Login() (err error) {
 			"cmd":   cmd.String(),
 		}).Error(constant.DockerLoginErr)
 		err = errors.New(constant.DockerLoginErr)
-		panic(constant.DockerLoginErr)
+		return err
+		//panic(constant.DockerLoginErr)
 	}
 	return
 }

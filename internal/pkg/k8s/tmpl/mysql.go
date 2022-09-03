@@ -31,7 +31,7 @@ spec:
       containers:
         - name: container-58s792
           imagePullPolicy: IfNotPresent
-          image: 'core.harbor.dked:30002/csmp/mysql:5.7.35'
+          image: {{image}}
           ports:
             - name: tcp-3306
               protocol: TCP
@@ -126,6 +126,7 @@ data:
   MYSQL_ROOT_PASSWORD: {{password}}
 type: Opaque
 `
+
 //MysqlConf mysql配置信息
 var MysqlConf = `kind: ConfigMap
 apiVersion: v1

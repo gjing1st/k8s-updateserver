@@ -3,10 +3,12 @@ module upserver
 go 1.17
 
 require (
+	github.com/elastic/go-elasticsearch/v7 v7.17.1
 	github.com/gin-gonic/gin v1.8.1
 	github.com/goharbor/go-client v0.25.0
 	github.com/jinzhu/configor v1.2.1
 	github.com/sirupsen/logrus v1.9.0
+	golang.org/x/crypto v0.0.0-20220622213112-05595931fe9d
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0
 )
 
@@ -43,7 +45,6 @@ require (
 	github.com/pelletier/go-toml/v2 v2.0.1 // indirect
 	github.com/ugorji/go/codec v1.2.7 // indirect
 	go.mongodb.org/mongo-driver v1.10.0 // indirect
-	golang.org/x/crypto v0.0.0-20220622213112-05595931fe9d // indirect
 	golang.org/x/net v0.0.0-20220127200216-cd36cc0744dd // indirect
 	golang.org/x/sys v0.0.0-20220715151400-c0bba94af5f8 // indirect
 	golang.org/x/text v0.3.7 // indirect

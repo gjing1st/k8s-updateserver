@@ -166,7 +166,7 @@ func UpVersion(up UpVersionReq) (message string, err error) {
 // @success:
 func GetRepoList(workspaces string) (res *AppRepoResponse, err error) {
 	if workspaces == "" {
-		workspaces = utils.K8sConfig.K8s.Workspace
+		workspaces = utils.K8sConfig.K8s.Workspace.Name
 	}
 	reqUrl := utils.K8sConfig.K8s.Url + "/kapis/openpitrix.io/v1/workspaces/" + workspaces + "/repos"
 	httpCode, err1 := JsonRequestTimeout("GET", reqUrl, nil, &res, time.Second*10)
@@ -187,7 +187,7 @@ func GetRepoList(workspaces string) (res *AppRepoResponse, err error) {
 // @success:
 func UpdateRepo(workspaces, repoId string) (message string, err error) {
 	if workspaces == "" {
-		workspaces = utils.K8sConfig.K8s.Workspace
+		workspaces = utils.K8sConfig.K8s.Workspace.Name
 	}
 	reqUrl := utils.K8sConfig.K8s.Url + "/kapis/openpitrix.io/v1/workspaces/" + workspaces + "/repos/" + repoId + "/action"
 	var reqData UpdateRequest
@@ -211,7 +211,7 @@ func UpdateRepo(workspaces, repoId string) (message string, err error) {
 // @success:
 func GetAndUpdateRepo(workspaces string) error {
 	if workspaces == "" {
-		workspaces = utils.K8sConfig.K8s.Workspace
+		workspaces = utils.K8sConfig.K8s.Workspace.Name
 	}
 	res, err := GetRepoList(workspaces)
 	if err != nil {
@@ -278,6 +278,7 @@ func CreateRepos(harborUrl, workspace, repoName, projectName string) error {
 	if harborUrl == "" {
 		harborUrl = "http://core.harbor.dked:30002"
 	}
+	//TODO 创建harbor中的项目
 	reqData := NewCreateRepoRequest(harborUrl, repoName, projectName)
 	reqUrl := utils.K8sConfig.K8s.Url + "/kapis/openpitrix.io/v1/workspaces/" + workspace + "/repos"
 	httpCode, err := JsonRestRequestTimeout("POST", reqUrl, reqData, nil, time.Second*10)
@@ -407,13 +408,13 @@ func CreateAll(c *Create) (err error) {
 	err = CreateWorkspaces(c.Workspace, c.WorkspaceAliasName, c.WorkspaceDesc)
 	if err != nil {
 		log.WithField("err", err).Error("创建企业空间失败")
-		return
+		//return
 	}
 	time.Sleep(time.Second)
 	err = CreateProject(c.Namespace, c.Workspace, c.ProjectAliasName, c.ProjectDesc)
 	if err != nil {
 		log.WithField("err", err).Error("创建企业空间中的项目")
-		return
+		//return
 	}
 	time.Sleep(time.Second)
 	err = CreateRepos(c.HarborUrl, c.Workspace, c.RepoName, c.RepoProjectName)

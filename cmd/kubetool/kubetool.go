@@ -21,51 +21,73 @@ import (
 
 var harborService service.HarborService
 var (
-	zipName     string
-	configFileName  string
-	projectName string
-	tempPath    string
-	initOs      bool
-	create string
+	zipName        string
+	configFileName string
+	projectName    string
+	tempPath       string
+	initOs         bool
+	create         string
 )
 
 func init() {
 	flag.StringVar(&zipName, "z", "", "zip 指定zip压缩包名称用于推送至harbor私有仓库")
-	flag.StringVar(&configFileName, "f", "", "configFileName 配置文件名称用来k8s部署初始化")
-	flag.StringVar(&tempPath, "t", "./", "tmpPath 解压升级包的目录")
+	flag.StringVar(&configFileName, "f", constant.KubeConfigName, "configFileName 配置文件名称用来k8s部署初始化")
+	//flag.StringVar(&tempPath, "t", "./kubetool", "tmpPath 解压升级包的目录")
 	flag.BoolVar(&initOs, "i", false, "initOS 初始化操作系统")
 	flag.StringVar(&create, "c", "", "create config|app 创建k8s应用或配置文件")
 
 }
 
-
-
 //go run main.go -z E:/project/csmp/version/csmp_v3.2.0.1.zip
 func main() {
 	flag.Parse()
 	var err error
-	if configFileName == ""{
-		//配置文件名称
+	//fmt.Println("tempPath+configFileName", tempPath+configFileName)
+	//err = configor.Load(&utils.K8sConfig, tempPath+configFileName)
+	//config := utils.K8sConfig
+	//fmt.Printf("%#v", config.K8s.Url)
+	//fmt.Println("Workspace.Name", config.K8s.Workspace.Name)
+	//fmt.Println("Workspace.Desc", config.K8s.Workspace.Desc)
+	//fmt.Println("Namespace.Name", config.K8s.Namespace.Name)
+	//fmt.Println("Username.Name", config.K8s.Username)
+	//fmt.Println("Password.Name", config.K8s.Password)
+	//fmt.Println("Repo.Name", config.K8s.Repo.Name)
+	//fmt.Println("Repo.Projectname", config.K8s.Repo.Projectname)
+	//fmt.Println("Appname", config.K8s.Appname)
+	//fmt.Println("Mysql", config.K8s.Mysql.Database)
+	//fmt.Println("Password", config.K8s.Mysql.Password)
+	//fmt.Println("Harbor.Address", config.Harbor.Address)
+	//fmt.Println("Project", config.Harbor.Project)
+	//fmt.Println("Project", config.Harbor.Project)
+	//fmt.Println("Password", config.Harbor.Password)
+	//fmt.Println("Admin", config.Harbor.Admin)
+	//return
+	tempPath = "./kubetool/"
+	tempVersion := tempPath + "version/"
+	_ = os.MkdirAll(tempVersion, os.ModePerm)
+	//创建k8s中应用
+	if configFileName == "" {
 		configFileName = constant.KubeConfigName
 	}
-	if create == "config"{
+	err = configor.Load(&utils.K8sConfig, configFileName)
+	if err != nil {
+		log.WithField("err", err).Error("读取配置文件出错")
+		return
+	}
+
+	if create == "config" {
 		//导入配置模板
 		err = k8s.ExportKubeConfig(configFileName)
 		if err != nil {
-			log.WithField("err",err).Error("创建配置文件失败")
+			log.WithField("err", err).Error("创建配置文件失败")
 			return
 		}
-	}else if create == "app"{
-		//创建k8s中应用
-		err = configor.Load(&utils.KubeToolConfig, tempPath+configFileName)
-		if err != nil {
-			log.WithField("err",err).Error("读取配置文件出错")
-			return
-		}
-		config := utils.KubeToolConfig
+	} else if create == "app" {
+
+		config := utils.K8sConfig
 
 		//导出文件
-		k8s.Export(tempPath, config.K8s.Namespace.Name, config.K8s.Mysql.Database, config.K8s.Mysql.Password)
+		k8s.Export(tempPath, config.K8s.Namespace.Name, config.K8s.Mysql.Database, config.K8s.Mysql.Password, config.K8s.Mysql.Image)
 
 		//创建k8s中的配置项
 		c := &k8s.Create{
@@ -83,28 +105,21 @@ func main() {
 		csmp.KubeApply(tempPath, c)
 	}
 
-
-
-	fmt.Println("create=",create)
-	fmt.Println("fileName=",configFileName)
-	fmt.Printf("%#v",utils.KubeToolConfig.K8s.Namespace.Desc)
-	return
-
-
-	tempVersion := tempPath + "version/"
-	_ = os.MkdirAll(tempVersion, os.ModePerm)
-
+	fmt.Println("create=", create)
+	fmt.Println("fileName=", configFileName)
+	//return
 
 	if initOs {
 		//初始化操作系统
 		InitOS()
 	}
+	fmt.Println("zipName", zipName)
 	if zipName != "" {
 		//推送升级包
 		PushTar(tempVersion)
 	}
 
-	fmt.Println("success")
+	fmt.Println("finish")
 
 }
 
@@ -118,7 +133,8 @@ func main() {
 func PushTar(tempVersion string) {
 	//登录harbor仓库和添加helm仓库
 	service.Init()
-
+	utils.RunCommand("mkdir", "-p", "/root/.local/share/helm/plugins/helm-push")
+	utils.RunCommand("tar", "-zxvf", "helm-push_0.10.3_linux_amd64.tar.gz", "-C", "/root/.local/share/helm/plugins/helm-push")
 	//解压缩升级包
 	utils.UnzipDir(zipName, tempVersion)
 	zipPath, zipFileName := path.Split(zipName)

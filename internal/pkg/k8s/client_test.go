@@ -43,10 +43,10 @@ func TestGetVersions(t *testing.T) {
 		"default",
 		"",
 		apps.Items[0].App.Name,
-		utils.K8sConfig.K8s.Namespace,
+		utils.K8sConfig.K8s.Namespace.Name,
 		"admin",
 		res.Items[0].VersionId,
-		utils.K8sConfig.K8s.Workspace,
+		utils.K8sConfig.K8s.Workspace.Name,
 	}
 	upJson, _ := json.Marshal(up)
 	fmt.Println(string(upJson))
@@ -75,35 +75,34 @@ func TestUpdateRepo(t *testing.T) {
 }
 
 func TestCreateWorkspaces(t *testing.T) {
-	err := CreateWorkspaces("test", "test","测试创建企业空间")
+	err := CreateWorkspaces("test", "test", "测试创建企业空间")
 	fmt.Println(err)
 }
-func TestProject(t *testing.T)  {
-	err := CreateProject("test-project", "test-project","测试创建项目","test")
+func TestProject(t *testing.T) {
+	err := CreateProject("test-project", "test-project", "测试创建项目", "test")
 	fmt.Println(err)
 }
 func TestExportMysqlServer(t *testing.T) {
-	ExportMysqlSecret("/tmp/k8s/version/","test-project","mmyypt_db","zf12345678")
+	ExportMysqlSecret("/tmp/k8s/version/", "test-project", "mmyypt_db", "zf12345678")
 }
 
 func TestCreateRepos(t *testing.T) {
 	var project = "library1"
-	CreateRepos("","test",project,"csmp")
-
+	CreateRepos("", "test", project, "csmp")
 
 }
 
 func TestGetRepoApps(t *testing.T) {
-	res,err :=GetRepoApps("repo-95x39n214x9p1o")
-	fmt.Println("res",res,"    err= ",err)
+	res, err := GetRepoApps("repo-95x39n214x9p1o")
+	fmt.Println("res", res, "    err= ", err)
 }
 
 func TestFile(t *testing.T) {
-	yaml,err := Files("app-2wpvoo7pz18qp8","appv-750pkkp1n63z1v")
-	fmt.Println("yaml",yaml,"    err= ",err)
+	yaml, err := Files("app-2wpvoo7pz18qp8", "appv-750pkkp1n63z1v")
+	fmt.Println("yaml", yaml, "    err= ", err)
 }
 
 func TestCreateApp(t *testing.T) {
-	err := CreateApp("ww","namespace","app-name2")
-	fmt.Println("创建应用结果：",err)
+	err := CreateApp("ww", "namespace", "app-name2")
+	fmt.Println("创建应用结果：", err)
 }
