@@ -1,0 +1,42 @@
+apisix:
+  url: http://apisix-admin.default.svc.cluster.local:9180
+  api-key: edd1c9f034335f136f87ad84b625c8f1
+k8s:
+  url: http://ks-apiserver.kubesphere-system.svc
+  namespace: csmp
+  workspace: dked
+  username: csmp
+  password: Dked@213
+harbor:
+  address: core.harbor.dked:30002
+  admin: admin
+  password: Harbor12345
+  project: csmp
+kmc:
+  url: http://csmp-kmc.csmp:9527
+  appid: "csmp"
+  appsecret: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpX"
+admin:
+  url: http://csmp-backend.csmp:8100
+health:
+  url: http://csmp-healthcheck.csmp:8003
+middle:
+  url: csmp-middlewares.csmp:10088
+mysql:
+  ip: mysql.csmp
+  port: 3306
+  username: root
+  password: zf12345678
+  dbname: mmyypt_db
+  readtimeout: 10000
+  writetimeout: 10000
+images:
+  - model: dk1
+    url: core.harbor.dked:30002/csmp/hsmsoft:v3.2.0
+    port: 9255
+  - model: tss-yw
+    url: core.harbor.dked:30002/csmp/stftsfm:v3.2.0
+    port: 9211
+  - model: tss-bjca
+    url: core.harbor.dked:30002/csmp/stftsbjca:v3.2.0
+    port: 9211

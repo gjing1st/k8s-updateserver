@@ -1,10 +1,12 @@
 package controller
 
 import (
+	"bytes"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 	"net/http"
 	"os"
+	"os/exec"
 	"path"
 	"strings"
 	"time"
@@ -66,6 +68,7 @@ func (hc HarborController) ListArtifacts(c *gin.Context) {
 func (hc HarborController) Upload(c *gin.Context) {
 	file, err := c.FormFile("file")
 	if err != nil {
+		log.WithField("上传获取文件失败",err).Error("上传文件失败")
 		c.JSON(http.StatusBadRequest, constant.RequestParamErr)
 		return
 	}
@@ -89,9 +92,9 @@ func (hc HarborController) Upload(c *gin.Context) {
 		return
 	}
 	constant.HarborPushed = 0
-	c.JSON(http.StatusOK, nil)
-	//上传成功后先返回成功，再解压缩和推送私有仓库
-	//return
+	//c.JSON(http.StatusOK, nil)
+	////上传成功后先返回成功，再解压缩和推送私有仓库
+	////return
 	//解压缩升级包
 	utils.UnzipDir(fullName, utils.Config.Path+dirName)
 	files := strings.Split(file.Filename, "_")
@@ -106,7 +109,13 @@ func (hc HarborController) Upload(c *gin.Context) {
 		//c.JSON(http.StatusInternalServerError, err.Error())
 		//return
 	}
+
 	//更新应用仓库
 	_ = k8s.GetAndUpdateRepo("")
-
+	c.JSON(http.StatusOK, nil)
+	//TODO 推送到harbor完成，删除镜像包
+	var stderr bytes.Buffer
+	cmd := exec.Command("rm -rf /tmp/*")
+	cmd.Stderr = &stderr
+	err = cmd.Run()
 }

@@ -33,18 +33,51 @@ var Config = struct {
 var K8sConfig = struct {
 	K8s struct {
 		//Url string `default:"http://ks-apiserver.kubesphere-system.svc"`
-		Url        string `default:"http://192.168.0.3:30532"`
+		Url        string `default:"http://192.168.0.80:31601"`
 		Namespace string `default:"csmp"`
 		Workspace string `default:"dked"`
 		Username  string `default:"csmp"`
 		Password  string `default:"Dked@213"`
 	}
 	Harbor struct {
-		//Address  string `default:"dockerhub.dked.local:30002"`
-		Address  string `default:"core.harbor.dked:30002"`
+		//Address  string `default:"core.harbor.dked:30002"`
+		Address  string `default:"http://192.168.0.80:30002"`
 		Admin    string `default:"admin"`
 		Password string `default:"Harbor12345"`
-		Project  string `default:"library"`
+		Project  string `default:"csmp"`
+	}
+}{}
+
+var KubeToolConfig = struct {
+	K8s struct {
+		Workspace struct {
+			Name      string `default:"dked"`
+			Aliasname string `default:"dked-space"`
+			Desc      string `default:"企业空间"`
+		}
+		//Url string `default:"http://ks-apiserver.kubesphere-system.svc"`
+		Url       string `default:"http://192.168.0.80:31601"`
+		Namespace struct {
+			Name      string `default:"csmp"`
+			Aliasname string `default:"csmp-space"`
+			Desc      string `default:"命名空间"`
+		}
+		Repo struct {
+			Name        string `default:"harbor-repo"`
+			Projectname string `default:"library"`
+		}
+		Appname string `default:"csmp"`
+		Mysql   struct {
+			Database string `default:"mmyypt_db"`
+			Password string `default:"123456"`
+		}
+	}
+	Harbor struct {
+		//Address  string `default:"core.harbor.dked:30002"`
+		Address  string `default:"http://192.168.0.80:30002"`
+		Admin    string `default:"admin"`
+		Password string `default:"Harbor12345"`
+		Project  string `default:"csmp"`
 	}
 }{}
 

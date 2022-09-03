@@ -65,6 +65,7 @@ func (ks K8sService) UnzipAndPush() error {
 	if constant.HarborPushed == 1{
 		return nil
 	}
+	return nil
 	rootPath := utils.Config.Path
 	fileInfos, err := ioutil.ReadDir(rootPath)
 	if err != nil {
