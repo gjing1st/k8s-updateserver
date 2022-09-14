@@ -11,13 +11,18 @@ var RealTime = `{
         "bool": {
             "must": [
                 {
-                    "match": {
+                    "match_phrase": {
                         "msg": "{{msgField}}"
                     }
                 },
                 {
-                    "match": {
+                    "match_phrase": {
                         "event_tid": {{eventTidField}}
+                    }
+                },
+                {
+                    "match_phrase": {
+                        "kubernetes.namespace_name": "{{nameSpaceField}}"
                     }
                 }
             ]
@@ -35,12 +40,12 @@ var Ranking = `{
 		"bool": {
 			"must": [
 				{
-					"match": {
+					"match_phrase": {
 						"msg": "{{msgField}}"
 					}
 				},
 				{
-					"match": {
+					"match_phrase": {
 						"event_tid": {{eventTidField}}
 					}
 				},
@@ -51,7 +56,12 @@ var Ranking = `{
 							"lt": "{{ltField}}"
 						}
 					}
-				}
+				},
+                {
+                    "match_phrase": {
+                        "kubernetes.namespace_name": "{{nameSpaceField}}"
+                    }
+                }
 			]
 		}
 	},
@@ -71,7 +81,7 @@ var Flow = `{
         "bool": {
             "must": [
                 {
-                    "match": {
+                    "match_phrase": {
                         "msg": "{{msgField}}"
                     }
                 },
@@ -84,8 +94,13 @@ var Flow = `{
                     }
                 },
                 {
-                    "match": {
+                    "match_phrase": {
                         "event_tid": {{eventTidField}}
+                    }
+                },
+                {
+                    "match_phrase": {
+                        "kubernetes.namespace_name": "{{nameSpaceField}}"
                     }
                 }
             ]
@@ -117,13 +132,18 @@ var Statistics = `{
         "bool": {
             "must": [
                 {
-                    "match": {
+                    "match_phrase": {
                         "msg": "{{msgField}}"
                     }
                 },
                 {
-                    "match": {
+                    "match_phrase": {
                         "event_tid": {{eventTidField}}
+                    }
+                },
+                {
+                    "match_phrase": {
+                        "kubernetes.namespace_name": "{{nameSpaceField}}"
                     }
                 }
             ],
@@ -147,4 +167,37 @@ var Statistics = `{
         }
     },
     "size": 0
+}`
+
+var Latest = `{
+    "query": {
+        "bool": {
+            "must": [
+                {
+                    "match_phrase": {
+                        "msg": "{{msgField}}"
+                    }
+                },
+                {
+                    "match_phrase": {
+                        "event_tid": {{eventTidField}}
+                    }
+                },
+                {
+                    "match_phrase": {
+                        "kubernetes.namespace_name": "{{nameSpaceField}}"
+                    }
+                },{
+                    "range": {
+                        "event_time": {
+                            "gte": {{gtField}},
+                            "lt": {{ltField}}
+                        }
+                    }
+                }
+            ]
+        }
+    },
+    "from": {{fromField}},
+    "size": {{sizeField}}
 }`

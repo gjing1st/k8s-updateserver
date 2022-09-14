@@ -23,7 +23,7 @@ var Config = struct {
 		Host     string `default:"127.0.0.1"`
 		UserName string `default:"root"`
 		Password string `default:"root"`
-		DBName   string `default:"mck"`
+		DBName   string `default:"es"`
 		Port     string `default:"3306"`
 		MinConns int    `default:"90"`  //连接池最小连接数量 不要太小
 		MaxConns int    `default:"120"` //连接池最大连接数量 两者相差不要太大
@@ -59,8 +59,13 @@ var K8sConfig = struct {
 			Image    string `default:"mysql:5.7.35"`
 		}
 		ElasticSearch struct {
-			Address string `default:"http://192.168.0.80:31199"`
+			Address string `default:"http://192.168.8.129:30637"`
 			//Address string `default:"elasticsearch-logging-data.kubesphere-logging-system.svc:9200"`
+		}
+		Statistic struct {
+			CrontabTime   int    `default:"120"`
+			MongoDatabase string `default:"csmp"`
+			Collection    string `default:"statistic"`
 		}
 	}
 	Harbor struct {

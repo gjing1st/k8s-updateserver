@@ -10,12 +10,13 @@ import (
 	"fmt"
 	"testing"
 	"time"
+	"upserver/internal/pkg/model/statistic"
+	"upserver/internal/pkg/utils"
 )
 
 var ss StatisticService
 
 func TestInit(t *testing.T) {
-	Init()
 	//query := esT{
 	//	"query": esT{
 	//		"match": esT{
@@ -29,28 +30,37 @@ func TestInit(t *testing.T) {
 	//fmt.Println("err", err)
 	//fmt.Println(query)
 	//Search("ks-logstash-log-2022.09.06", query)
-	t1, _ := json.Marshal(time.Now())
-	fmt.Println(string(t1))
 
-	//res, _ := ss.RankingQuery("mmyypt_app_events", 3, "2022-09-06T07:30:50.444Z", "2022-09-07T07:18:48.712Z")
-	//res, _ := ss.FlowQuery("mmyypt_app_events", 3, "2022-08-06T07:30:50.444Z", "2022-09-07T07:18:48.712Z")
-	res, _ := ss.StatisticsQuery("mmyypt_app_events", 3, "2022-08-06T07:30:50.444Z", "2022-09-07T07:18:48.712Z")
-	//res, _ := ss.RankingQuery("mmyypt_app_events", 3, time.Now().Add(time.Duration(-1*time.Hour*33)), time.Now())
-	fmt.Println("res", res)
-
+	res, _ := ss.RealTimeQuery("mmyypt_app_events", "csmp", 0)
+	//endTime, _ := time.Now().MarshalJSON()
+	//tt := time.Now()
+	//timeByte, _ := json.Marshal(tt)
+	//res, _ := ss.RankingQuery("mmyypt_app_events", "csmp", 0, "2022-09-05T07:30:50.444Z", string(timeByte))
+	//res, _ := ss.FlowQuery("mmyypt_app_events", "csmp", 0, "2022-08-06T07:30:50.444Z", "2022-09-07T07:18:48.712Z")
+	//res, _ := ss.StatisticsQuery("mmyypt_app_events", "csmp", 0, "2022-08-06T07:30:50.444Z", string(endTime))
+	//res, _ := ss.RankingQuery("mmyypt_app_events", "csmp",0, time.Now().Add(time.Duration(-1*time.Hour*33)), time.Now())
+	var r statistic.RealTimeResponse
+	json.Unmarshal(res, &r)
+	sasa, _ := json.MarshalIndent(r, "  ", "  ")
+	fmt.Println("============", string(sasa))
 }
 
 func TestTime(t *testing.T) {
 
-	go func() {
-		ticker := time.NewTicker(1 * time.Second)
-		defer ticker.Stop()
+	tt := time.Now()
+	timeByte, _ := tt.MarshalJSON()
+	fmt.Println(string(timeByte))
+}
 
-		for range ticker.C {
-			fmt.Println("执行的业务逻辑")
-		}
-
-	}()
-
-	select {}
+func TestLatest(t *testing.T) {
+	now := time.Now()
+	endTime, _ := now.MarshalJSON()
+	startTime, _ := now.Add(time.Second * time.Duration(utils.K8sConfig.K8s.Statistic.CrontabTime) * -1).MarshalJSON()
+	fmt.Println(string(endTime))
+	fmt.Println(string(startTime))
+	res, _ := ss.LatestQuery("mmyypt_app_events", "csmp", 0, string(startTime), string(endTime))
+	var r statistic.RealTimeResponse
+	json.Unmarshal(res, &r)
+	sasa, _ := json.MarshalIndent(r, "  ", "  ")
+	fmt.Println("============", string(sasa))
 }

@@ -6,8 +6,7 @@
 package tmpl
 
 //ConfPvc config pvc
-var ConfPvc = `
-apiVersion: v1
+var ConfPvc = `apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   namespace: {{projectName}}
@@ -20,6 +19,7 @@ spec:
       storage: 1Gi
   storageClassName: rook-cephfs
 `
+
 //FrontendPvc 前端nginx存储卷
 var FrontendPvc = `
 apiVersion: v1
@@ -35,6 +35,7 @@ spec:
       storage: 1Gi
   storageClassName: rook-cephfs
 `
+
 //KmcPvc kmc存储卷
 var KmcPvc = `
 apiVersion: v1
@@ -50,6 +51,7 @@ spec:
       storage: 1Gi
   storageClassName: rook-cephfs
 `
+
 //LibPvc lib存储卷
 var LibPvc = `
 apiVersion: v1
@@ -65,6 +67,7 @@ spec:
       storage: 1Gi
   storageClassName: rook-cephfs
 `
+
 //MysqlPvc mysql存储卷
 var MysqlPvc = `
 apiVersion: v1
@@ -80,6 +83,7 @@ spec:
       storage: 500Gi
   storageClassName: rook-cephfs
 `
+
 //UpdatePvc 升级服务pvc
 var UpdatePvc = `
 apiVersion: v1
