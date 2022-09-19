@@ -180,11 +180,6 @@ var Latest = `{
                 },
                 {
                     "match_phrase": {
-                        "event_tid": {{eventTidField}}
-                    }
-                },
-                {
-                    "match_phrase": {
                         "kubernetes.namespace_name": "{{nameSpaceField}}"
                     }
                 },{
@@ -193,6 +188,10 @@ var Latest = `{
                             "gte": {{gtField}},
                             "lt": {{ltField}}
                         }
+                    }
+                },{
+                    "match_phrase": {
+                        "event_tid": {{eventTidField}}
                     }
                 }
             ]

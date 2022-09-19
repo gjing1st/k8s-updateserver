@@ -258,7 +258,7 @@ func (ss *StatisticService) LatestQuery(msgIndex, nameSpace string, eventTid int
 	q = strings.Replace(q, "{{nameSpaceField}}", nameSpace, 1)
 	q = strings.Replace(q, "{{fromField}}", strconv.Itoa(fromField), 1)
 	q = strings.Replace(q, "{{sizeField}}", strconv.Itoa(sizeField), 1)
-	//fmt.Println("#########", q)
+	fmt.Println("#########", q)
 	var query map[string]interface{}
 	err = json.Unmarshal([]byte(q), &query)
 	if err != nil {
@@ -267,8 +267,9 @@ func (ss *StatisticService) LatestQuery(msgIndex, nameSpace string, eventTid int
 	}
 	//fmt.Println("====================")
 	if eventTid == 0 {
-		query["query"].(map[string]interface{})["bool"].(map[string]interface{})["must"] = query["query"].(map[string]interface{})["bool"].(map[string]interface{})["must"].([]interface{})[0]
+		query["query"].(map[string]interface{})["bool"].(map[string]interface{})["must"] = query["query"].(map[string]interface{})["bool"].(map[string]interface{})["must"].([]interface{})[:3]
 	}
+	fmt.Println("====================", query["query"].(map[string]interface{})["bool"].(map[string]interface{})["must"])
 
 	res, _ = Search(query)
 

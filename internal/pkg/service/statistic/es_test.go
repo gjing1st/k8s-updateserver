@@ -16,6 +16,9 @@ import (
 
 var ss StatisticService
 
+func init() {
+	utils.InitConfig()
+}
 func TestInit(t *testing.T) {
 	//query := esT{
 	//	"query": esT{
@@ -58,9 +61,22 @@ func TestLatest(t *testing.T) {
 	startTime, _ := now.Add(time.Second * time.Duration(utils.K8sConfig.K8s.Statistic.CrontabTime) * -1).MarshalJSON()
 	fmt.Println(string(endTime))
 	fmt.Println(string(startTime))
-	res, _ := ss.LatestQuery("mmyypt_app_events", "csmp", 0, string(startTime), string(endTime))
+	res, _ := ss.LatestQuery("mmyypt_app_events", "csmp", 0, string(startTime), string(endTime), 0, 10)
 	var r statistic.RealTimeResponse
 	json.Unmarshal(res, &r)
 	sasa, _ := json.MarshalIndent(r, "  ", "  ")
 	fmt.Println("============", string(sasa))
+}
+
+func TestRanking(t *testing.T) {
+
+	ss.RankingByApp(time.Now().Add(time.Hour*-200), time.Now())
+}
+
+func TestStatisticService_CipherStatistic(t *testing.T) {
+	ss.CipherStatistic(time.Now().Add(time.Hour*-200), time.Now())
+}
+
+func TestAppFlow(t *testing.T) {
+	ss.AppFlow(time.Now().Add(time.Hour*-200), time.Now())
 }

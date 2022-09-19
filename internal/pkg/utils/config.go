@@ -59,7 +59,7 @@ var K8sConfig = struct {
 			Image    string `default:"mysql:5.7.35"`
 		}
 		ElasticSearch struct {
-			Address string `default:"http://192.168.8.129:30637"`
+			Address string `default:"http://192.168.0.80:31199"`
 			//Address string `default:"elasticsearch-logging-data.kubesphere-logging-system.svc:9200"`
 		}
 		Statistic struct {

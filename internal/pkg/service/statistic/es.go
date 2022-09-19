@@ -22,7 +22,8 @@ import (
 type StatisticService struct {
 }
 
-var startTime []byte
+var startTimeStr []byte
+var startTime time.Time
 var rollback bool //上次定时任务是否已执行成功
 // Cron
 // @description: 定时任务读取es日志写入mongodb
@@ -32,11 +33,14 @@ var rollback bool //上次定时任务是否已执行成功
 // @date: 2022/9/13 20:17
 // @success:
 func Cron() {
-	now := time.Now()
-	endTime, _ := now.MarshalJSON()
+	endTime := time.Now()
+	endTimeStr, _ := endTime.MarshalJSON()
 	if !rollback {
 		//上次执行成功，开始时间使用2分钟前的时间
-		startTime, _ = now.Add(time.Second * time.Duration(utils.K8sConfig.K8s.Statistic.CrontabTime) * -1).MarshalJSON()
+		//startTime = endTime.Add(time.Second * time.Duration(utils.K8sConfig.K8s.Statistic.CrontabTime) * -1)
+		//FIXME 此处为了测试修改时间
+		startTime = endTime.Add(100 * time.Hour * time.Duration(utils.K8sConfig.K8s.Statistic.CrontabTime) * -1)
+		startTimeStr, _ = startTime.MarshalJSON()
 	}
 	var ss StatisticService
 	var from, num int
@@ -44,19 +48,19 @@ func Cron() {
 	statistics := map[string]statistic.StatisticsTable{}
 	var size = 1000
 LOOP:
-	res, err := ss.LatestQuery("mmyypt_app_events", "csmp", 0, string(startTime), string(endTime), from, size)
+	res, err := ss.LatestQuery("mmyypt_app_events", "csmp", 0, string(startTimeStr), string(endTimeStr), from, size)
 	if err != nil {
 		log.WithFields(utils.WriteDataLogs("定时任务查询es出错", err)).Error(constant.Msg)
 		return
 	}
-	fmt.Println("es返回数据=============", string(res))
+	//fmt.Println("es返回数据=============", string(res))
 	var rr statistic.RealTimeResponse
 	//FIXME 能解析，但是err有值？？
 	//err = json.Unmarshal(res, &rr)
 	json.Unmarshal(res, &rr)
 	fmt.Println("len", len(rr.Hits.Hits))
-	sasa, _ := json.MarshalIndent(rr, "  ", "  ")
-	fmt.Println("解析后数据============", string(sasa))
+	//sasa, _ := json.MarshalIndent(rr, "  ", "  ")
+	//fmt.Println("解析后数据============", string(sasa))
 
 	if err != nil {
 		log.WithFields(utils.WriteDataLogs("定时任务查询请求数据解析json出错", err)).Error(constant.Msg)
@@ -81,12 +85,15 @@ LOOP:
 			sts := statistic.StatisticsTable{
 				TenantId:     v.Source.EventTid,
 				Appid:        v.Source.EventAppid,
+				AppName:      v.Source.EventAppName,
 				CipherType:   v.Source.EventDType,
 				CipherSerial: v.Source.EventSerial,
-				StartTime:    string(startTime),
-				EndTime:      string(endTime),
+				StartTime:    startTime,
+				EndTime:      endTime,
 				Total:        1,
 				Flow:         v.Source.EventData,
+				CreateTime:   time.Now(),
+				EventTime:    v.Source.EventTime.Unix(),
 			}
 			statistics[md5] = sts
 		}

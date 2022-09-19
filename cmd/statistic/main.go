@@ -6,12 +6,14 @@
 package main
 
 import (
+	"upserver/internal/apiserver/router/statistics"
 	"upserver/internal/pkg/service/statistic"
 	"upserver/internal/pkg/utils"
 )
 
 func main() {
 	utils.InitConfig()
-	statistic.Cron()
+	statistic.AddCron()
+	statistics.InitApi()
 	select {}
 }

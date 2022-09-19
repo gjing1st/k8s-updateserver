@@ -54,7 +54,7 @@ func TestGetMgoCli(t *testing.T) {
 	//	Name string
 	//}{1, "guojing"}
 	var ss statistic.StatisticService
-	statistic.Init()
+	//statistic.Init()
 	res, _ := ss.RealTimeQuery("mmyypt_app_events", "csmp", 0)
 	var r statistic2.RealTimeResponse
 	json.Unmarshal(res, &r)

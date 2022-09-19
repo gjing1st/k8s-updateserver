@@ -7,12 +7,15 @@ package statistics
 
 import (
 	"github.com/gin-gonic/gin"
-	"upserver/internal/apiserver/controller"
+	"upserver/internal/apiserver/controller/statistics"
 )
 
 func initStatisticsApi(apiV1 *gin.RouterGroup) {
 	api := apiV1.Group("/statistics")
-	k8sController := controller.K8sVersionController{}
-	api.POST("/broadcast", k8sController.UpdateVersion)
+	statisticController := statistics.StatisticController{}
+	api.POST("/appFlow", statisticController.AppFlow)
+	api.POST("/cipherStatistic", statisticController.CipherStatistic)
+	api.POST("/rankingByApp", statisticController.RankingByApp)
+	api.POST("/realtime", statisticController.RealTime)
 
 }
