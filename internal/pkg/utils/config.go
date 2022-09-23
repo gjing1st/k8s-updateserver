@@ -64,6 +64,7 @@ var K8sConfig = struct {
 		}
 		Statistic struct {
 			CrontabTime   int    `default:"120"`
+			MongoHost     string `default:"localhost:27017"`
 			MongoDatabase string `default:"csmp"`
 			Collection    string `default:"statistic"`
 		}

@@ -13,6 +13,12 @@ import (
 
 var esClient *elasticsearch.Client
 
+// EsInit
+// @description: 初始化es数据库
+// @author: GJing
+// @email: guojing@tna.cn
+// @date: 2022/9/23 15:14
+// @success:
 func EsInit() {
 	var err error
 	//utils.K8sConfig.K8s.ElasticSearch.Address = "http://192.168.0.80:31199"
@@ -29,6 +35,12 @@ func EsInit() {
 
 }
 
+// GetEsClient
+// @description: 获取es客户端
+// @author: GJing
+// @email: guojing@tna.cn
+// @date: 2022/9/23 15:15
+// @success:
 func GetEsClient() *elasticsearch.Client {
 	if esClient == nil {
 		EsInit()

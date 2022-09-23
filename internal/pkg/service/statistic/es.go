@@ -45,7 +45,7 @@ func Cron() {
 	var ss StatisticService
 	var from, num int
 	//用于存放临时数据，来验证定时任务期间的数据 租户  业务  密码服务  密码资源
-	statistics := map[string]statistic.StatisticsTable{}
+	statistics := make(map[string]statistic.StatisticsTable)
 	var size = 1000
 LOOP:
 	res, err := ss.LatestQuery("mmyypt_app_events", "csmp", 0, string(startTimeStr), string(endTimeStr), from, size)
@@ -142,5 +142,19 @@ func AddCron() {
 }
 
 func EsDataMarshal(startTime, endTime string, from int) {
+
+}
+
+// InitCheckMongoData
+// @description: 每次启动服务检测mongodb中是否有数据，是否重启后很久没更新
+// @param:
+// @author: GJing
+// @email: guojing@tna.cn
+// @date: 2022/9/23 15:02
+// @success:
+func InitCheckMongoData() {
+	//首次运行，全量获取数据
+
+	//服务重启，只获取缺少数据
 
 }

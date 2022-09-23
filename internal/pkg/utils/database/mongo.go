@@ -7,16 +7,26 @@ package database
 
 import (
 	"context"
+	"fmt"
 	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"upserver/internal/pkg/utils"
 )
 
 var mgoCli *mongo.Client
 
+// InitMgo
+// @description: 初始化mongodb
+// @param:
+// @author: GJing
+// @email: guojing@tna.cn
+// @date: 2022/9/23 15:11
+// @success:
 func InitMgo() {
 	var err error
-	clientOptions := options.Client().ApplyURI("mongodb://localhost:27017")
+	//clientOptions := options.Client().ApplyURI("mongodb://localhost:27017")
+	clientOptions := options.Client().ApplyURI(fmt.Sprintf("mongodb://%s", utils.K8sConfig.K8s.Statistic.MongoHost))
 
 	// 连接到MongoDB
 	mgoCli, err = mongo.Connect(context.TODO(), clientOptions)
@@ -29,6 +39,14 @@ func InitMgo() {
 		log.WithFields(log.Fields{"err": err.Error()}).Panic(DriverMongo + "连接失败")
 	}
 }
+
+// GetMgoCli
+// @description: 获取mongodb
+// @param:
+// @author: GJing
+// @email: guojing@tna.cn
+// @date: 2022/9/23 15:12
+// @success:
 func GetMgoCli() *mongo.Client {
 	if mgoCli == nil {
 		InitMgo()
