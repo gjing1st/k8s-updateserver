@@ -60,3 +60,10 @@ func InitLogger(level string, output string, dir string, caller bool) {
 func LogError(fields log.Fields, args ...interface{}) {
 	log.WithFields(fields).Error(args...)
 }
+
+func WriteDataLogs(info, err interface{}) log.Fields {
+	return log.Fields{
+		"event_info": info,
+		"err":        err,
+	}
+}

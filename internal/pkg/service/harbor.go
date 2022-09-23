@@ -2,6 +2,7 @@ package service
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	log "github.com/sirupsen/logrus"
 	"io/ioutil"
@@ -116,7 +117,8 @@ func (hs HarborService) AddHelmRepo() (err error) {
 			"error": fmt.Sprint(err) + ": " + stderr.String(),
 			"cmd":   cmd.String(),
 		}).Error(constant.AddHelmRepoErr)
-		panic("添加helm仓库失败")
+		return errors.New(constant.AddHelmRepoErr)
+		//panic("添加helm仓库失败")
 	}
 	return
 

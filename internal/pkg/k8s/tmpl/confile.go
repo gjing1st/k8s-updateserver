@@ -29,6 +29,7 @@ k8s:
   mysql:
     database: mmyypt_db
     password: 123456
+    image: core.harbor.dked:30002/csmp/mysql:5.7.35
 
 harbor:
   address: http://core.harbor.dked:30002

@@ -1,0 +1,29 @@
+k8s:
+  #企业空间名称
+  workspace: 
+    name: dked1
+    #别名
+    aliasname: dked1
+    desc: 笛卡尔盾1
+  url: http://192.168.1.80:31601
+  #企业空间中的项目名称对应k8s命名空间
+  namespace: 
+    name: csmp1
+    aliasname: dked-csmp1
+    desc: 笛卡尔盾csmp项目1
+  #应用仓库
+  repo: 
+    name: harbor1
+    #harbor私有仓库中的项目名称
+    projectname: library1
+  #要部署的应用名称
+  appname: csmp1
+  mysql:
+    database: mmyypt_db1
+    password: 1234561
+
+harbor:
+  address: http://core.harbor.dked:300021
+  admin: admin1
+  password: Harbor123451
+  project: csmp1

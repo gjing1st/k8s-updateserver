@@ -13,11 +13,15 @@ const (
 )
 
 const (
-	ConfPvc = "conf-pvc.yaml"
-	LibPvc = "lib-pvc.yaml"
+	ConfPvc     = "conf-pvc.yaml"
+	LibPvc      = "lib-pvc.yaml"
 	FrontendPvc = "frontend-pvc.yaml"
-	KmcPvc = "kmc-pvc.yaml"
-	MysqlPvc = "mysql-pvc.yaml"
-	UpdatePvc = "update-pvc.yaml"
+	KmcPvc      = "kmc-pvc.yaml"
+	MysqlPvc    = "mysql-pvc.yaml"
+	UpdatePvc   = "update-pvc.yaml"
 )
 const KubeConfigName = "kube-config.yaml"
+
+const (
+	Msg = "data_event"
+)
