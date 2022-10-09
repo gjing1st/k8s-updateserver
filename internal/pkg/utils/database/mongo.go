@@ -53,3 +53,17 @@ func GetMgoCli() *mongo.Client {
 	}
 	return mgoCli
 }
+
+// GetCollection
+// @description: 返回要操作的表
+// @param:
+// @author: GJing
+// @email: guojing@tna.cn
+// @date: 2022/10/8 10:38
+// @success:
+func GetCollection() *mongo.Collection {
+	cli := GetMgoCli()
+	mgo := cli.Database(utils.K8sConfig.K8s.Statistic.MongoDatabase)
+	collection := mgo.Collection(utils.K8sConfig.K8s.Statistic.Collection)
+	return collection
+}

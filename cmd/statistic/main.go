@@ -13,6 +13,7 @@ import (
 
 func main() {
 	utils.InitConfig()
+	statistic.InitCheckMongoData()
 	statistic.AddCron()
 	statistics.InitApi()
 	select {}

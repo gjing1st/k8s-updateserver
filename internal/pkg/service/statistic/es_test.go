@@ -80,3 +80,8 @@ func TestStatisticService_CipherStatistic(t *testing.T) {
 func TestAppFlow(t *testing.T) {
 	ss.AppFlow(time.Now().Add(time.Hour*-200), time.Now())
 }
+
+func TestLastQuery(t *testing.T) {
+	s := ss.LastData()
+	fmt.Println(s)
+}

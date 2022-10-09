@@ -11,6 +11,7 @@ import (
 	"fmt"
 	log "github.com/sirupsen/logrus"
 	"strconv"
+	"sync"
 	"time"
 	"upserver/internal/pkg/constant"
 	"upserver/internal/pkg/model/statistic"
@@ -24,7 +25,9 @@ type StatisticService struct {
 
 var startTimeStr []byte
 var startTime time.Time
-var rollback bool //上次定时任务是否已执行成功
+var rollback bool //上次定时任务是否已执行成功 false表示写入成功
+var sy sync.Mutex
+
 // Cron
 // @description: 定时任务读取es日志写入mongodb
 // @param:
@@ -34,6 +37,9 @@ var rollback bool //上次定时任务是否已执行成功
 // @success:
 func Cron() {
 	endTime := time.Now()
+	//开启锁
+	sy.Lock()
+	defer sy.Unlock()
 	endTimeStr, _ := endTime.MarshalJSON()
 	if !rollback {
 		//上次执行成功，开始时间使用2分钟前的时间
@@ -154,7 +160,19 @@ func EsDataMarshal(startTime, endTime string, from int) {
 // @success:
 func InitCheckMongoData() {
 	//首次运行，全量获取数据
+	filter := StatisticService{}.LastData()
+	if filter.CreateTime.IsZero() {
+		rollback = true
+		//开始时间，无特殊意义
+		startTime, _ = time.Parse("2006-01-02 15:04:05", "2022-08-08 08:08:08")
+		Cron()
+
+		return
+	}
 
 	//服务重启，只获取缺少数据
+	rollback = true
+	startTime = filter.CreateTime
+	Cron()
 
 }

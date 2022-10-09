@@ -11,6 +11,7 @@ import (
 	"fmt"
 	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo/options"
 	"time"
 	"upserver/internal/pkg/constant"
 	"upserver/internal/pkg/model/statistic"
@@ -297,4 +298,33 @@ func (ss *StatisticService) Realtime(msg, nameSpace string, eventTid, size int) 
 	}
 
 	return
+}
+
+// LastData
+// @description: 查询最新一条数据
+// @param:
+// @author: GJing
+// @email: guojing@tna.cn
+// @date: 2022/10/8 17:15
+// @success:
+func (ss StatisticService) LastData() (s *statistic.StatisticsTable) {
+	collection := database.GetCollection()
+	s = new(statistic.StatisticsTable)
+	err := collection.FindOne(context.TODO(), bson.D{}, options.FindOne().SetSort(bson.D{{"_id", -1}})).Decode(s)
+	if err != nil {
+		log.WithField("mongo serach err", nil).Error()
+		return
+	}
+
+	//for cuscor.Next(context.TODO()) {
+	//	err = cuscor.Decode(s)
+	//	if err != nil {
+	//		//log.WithField("mongo error", err).Error()
+	//	}
+	//}
+	return
+}
+
+func (ss StatisticService) name() {
+
 }
