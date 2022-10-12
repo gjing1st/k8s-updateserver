@@ -26,3 +26,8 @@ type FlowBuckets struct {
 		Value int `json:"value"`
 	} `json:"flow"`
 }
+
+type FlowAndTotal struct {
+	Flow  int `json:"flow" bson:"flow"`
+	Total int `json:"total" bson:"total"`
+}

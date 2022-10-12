@@ -10,7 +10,13 @@ import "time"
 //AppFlow 业务流量
 type AppFlow struct {
 	AppName string `json:"app_name"`
-	Flow    int    `json:"flow"`
+	Flow    int    `json:"flow" bson:"flow"`
+}
+
+type FlowAndTotal struct {
+	Time  []time.Time `json:"time"` //x轴为各时间节点
+	Flow  []int       `json:"flow"`
+	Total []int       `json:"total"`
 }
 
 //AppStatistic 业务调用服务排名

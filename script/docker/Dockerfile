@@ -15,17 +15,17 @@ RUN   go build -ldflags="-s -w"  -o upserver ./cmd/upserver/main.go
 
 FROM alpine
 #更新软件源
-RUN apk update --no-cache
+RUN apk update --no-cache \
 #安装 docker
-RUN apk add --no-cache docker-cli
+ && apk add --no-cache docker-cli
 #安装helm
 COPY ./helm /usr/local/bin/helm
 WORKDIR /home
 #安装push插件
 COPY ./helm-push_0.10.3_linux_amd64.tar.gz ./
-RUN mkdir -p /root/.local/share/helm/plugins/helm-push
-RUN tar zxvf  helm-push_0.10.3_linux_amd64.tar.gz  -C /root/.local/share/helm/plugins/helm-push
-RUN rm ./helm-push_0.10.3_linux_amd64.tar.gz
+RUN mkdir -p /root/.local/share/helm/plugins/helm-push \
+    && tar zxvf  helm-push_0.10.3_linux_amd64.tar.gz  -C /root/.local/share/helm/plugins/helm-push \
+    && rm ./helm-push_0.10.3_linux_amd64.tar.gz
 
 COPY --from=builder  /build/src/config/config.yml /home/config/config.yml
 COPY --from=builder /build/src/upserver /home/upserver

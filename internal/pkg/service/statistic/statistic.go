@@ -253,7 +253,7 @@ func (ss *StatisticService) AppFlow(startTime, endTime time.Time) (res []respons
 			utils.Int(v.Total),
 		})
 	}
-	//fmt.Println("=======res", res)
+	fmt.Println("=======res", res)
 
 	return
 }
@@ -325,6 +325,147 @@ func (ss StatisticService) LastData() (s *statistic.StatisticsTable) {
 	return
 }
 
-func (ss StatisticService) name() {
+// SumFlowAndTotal
+// @description: 获取流量调用次数
+// @param: tenantId int 租户id
+// @param: appName string 业务名称
+// @param: cipherType int 密码资源类型
+// @author: GJing
+// @email: guojing@tna.cn
+// @date: 2022/10/9 18:24
+// @success:
+func (ss StatisticService) SumFlowAndTotal(startTime, endTime time.Time, tenantId int, appid string, cipherType int) (res statistic.FlowAndTotal) {
+	collection := database.GetCollection()
+	//查询条件
+	filter := bson.D{}
+	//时间范围
+	var eventTime bson.E
+	eventTime = bson.E{"event_time", bson.D{{"$gte", startTime.Unix()}, {"$lt", endTime.Unix()}}}
+	filter = append(filter, eventTime)
+	if tenantId > 0 {
+		filter = append(filter, bson.E{"tenant_id", tenantId})
+	}
+	if appid != "" {
+		filter = append(filter, bson.E{"appid", appid})
+	}
+	if cipherType > 0 {
+		filter = append(filter, bson.E{"cipher_type", cipherType})
+	}
+	//分组
+	//group := bson.E{"total", bson.E{"$sum", "$flow"}}
+	//filter = append(filter, group)
 
+	fmt.Println("filter", filter)
+	pipeline := bson.A{
+		bson.D{{"$match", filter}},
+		bson.D{
+			{"$group", bson.D{
+				{"_id", "null"},
+				{"flow", bson.D{
+					{"$sum", "$flow"},
+				}},
+				{"total", bson.D{
+					{"$sum", "$total"},
+				}},
+			}},
+		},
+		//bson.D{{"$sort", bson.D{{"_id", 1}}}},
+	}
+	//groupStage := bson.D{
+	//	{"$group", bson.D{
+	//		{"_id", "null"},
+	//		{"count", bson.D{
+	//			{"$sum", "$flow"},
+	//		}},
+	//	}},
+	//}
+	//sss := mongo.Pipeline{pipeline}
+	cursor, err := collection.Aggregate(context.Background(), pipeline)
+	if err != nil {
+		log.WithFields(utils.WriteDataLogs("查询mongodb失败", err)).Error(constant.Msg)
+		return
+	}
+	var resArr []statistic.FlowAndTotal
+	if err = cursor.All(context.Background(), &resArr); err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("res", res)
+	if len(resArr) == 0 {
+		return
+	} else {
+		return resArr[0]
+	}
+}
+
+// GetFlowAndTotal
+// @description: 获取流量和调用次数
+// @param:
+// @author: GJing
+// @email: guojing@tna.cn
+// @date: 2022/10/10 18:47
+// @success:
+func (ss StatisticService) GetFlowAndTotal(timeRange, tenantId int, appid string, cipherType int) (res response.FlowAndTotal) {
+	var startTime, endTime time.Time
+	//var res [constant.TimeLen]response.FlowAndTotal
+	now := time.Now()
+	//if value, ok := constant.TimeRange[timeRange]; ok {
+	//	for i := 0; i < constant.TimeLen; i++ {
+	//		startTime = endTime.Add(time.Duration(constant.TimeRange[timeRange][0]))
+	//		flow := ss.SumFlow(startTime, endTime, tenantId, appid, cipherType)
+	//	}
+	//
+	//}
+	switch timeRange {
+	case constant.TimeOneHour, constant.TimeTwelveHour, constant.TimeOneDay:
+		//一小时，12小时，1天。减掉小时
+		for i := 0; i < constant.TimeLen; i++ {
+			startTime = now.Add(time.Duration(constant.TimeRange[timeRange][i]))
+			if i < constant.TimeLen-1 {
+				endTime = now.Add(time.Duration(constant.TimeRange[timeRange][i+1]))
+			} else {
+				endTime = now
+			}
+			flowTotal := ss.SumFlowAndTotal(startTime, endTime, tenantId, appid, cipherType)
+			//放入结果集
+			res.Time = append(res.Time, endTime)
+			res.Flow = append(res.Flow, flowTotal.Flow)
+			res.Total = append(res.Total, flowTotal.Total)
+		}
+
+	case constant.TimeOneWeek, constant.TimeOneMonth, constant.TimeThreeMonth:
+		//一周，一月，三个月。减掉天数
+		for i := 0; i < constant.TimeLen; i++ {
+			startTime = now.AddDate(0, 0, int(constant.TimeRange[timeRange][i]))
+			if i < constant.TimeLen-1 {
+				endTime = now.AddDate(0, 0, int(constant.TimeRange[timeRange][i+1]))
+			} else {
+				endTime = now
+			}
+			flowTotal := ss.SumFlowAndTotal(startTime, endTime, tenantId, appid, cipherType)
+			//放入结果集
+			res.Time = append(res.Time, endTime)
+			res.Flow = append(res.Flow, flowTotal.Flow)
+			res.Total = append(res.Total, flowTotal.Total)
+
+		}
+	case constant.TimeOneYear:
+		//一年的。减掉月数
+		for i := 0; i < constant.TimeLen; i++ {
+			startTime = now.AddDate(0, int(constant.TimeRange[timeRange][i]), 0)
+			if i < constant.TimeLen-1 {
+				endTime = now.AddDate(0, int(constant.TimeRange[timeRange][i+1]), 0)
+			} else {
+				endTime = now
+			}
+			flowTotal := ss.SumFlowAndTotal(startTime, endTime, tenantId, appid, cipherType)
+			//放入结果集
+			res.Time = append(res.Time, endTime)
+			res.Flow = append(res.Flow, flowTotal.Flow)
+			res.Total = append(res.Total, flowTotal.Total)
+
+		}
+	}
+
+	//fmt.Println(res)
+	return res
 }

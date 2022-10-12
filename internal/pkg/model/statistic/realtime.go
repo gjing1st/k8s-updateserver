@@ -53,7 +53,7 @@ type RealTimeSource struct {
 	EventSerial  string     `json:"event_serial"`
 	EventTid     int        `json:"event_tid"`
 	EventTime    time.Time  `json:"event_time"`
-	EventType    int        `json:"event_type"`
+	EventType    int        `json:"event_type"` //对应接口
 	Level        string     `json:"level"`
 	Log          string     `json:"log"`
 	Msg          string     `json:"msg"`
