@@ -1,9 +1,11 @@
 package controller
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
 	"net/http"
+	"sort"
 	"strconv"
 	"strings"
 	"upserver/internal/pkg/k8s"
@@ -203,6 +205,30 @@ func (kv K8sVersionController) GetVersionList(c *gin.Context) {
 	res.NowVersion = currentVersions[0]
 	res.Items = appAndVersion.Version.Items
 	res.TotalCount = appAndVersion.Version.TotalCount
+	//版本列表
+	var versionList []string
+	var versionMap = make(map[string]int)
+	fmt.Println("=======", currentVersions)
+	for i := 0; i < len(appAndVersion.Version.Items); i++ {
+		if _, ok := versionMap[appAndVersion.Version.Items[i].Name]; ok {
+
+		} else {
+			versionMap[appAndVersion.Version.Items[i].Name] = 1
+			fmt.Println("---------", appAndVersion.Version.Items[i].Name)
+			fmt.Println("utils.UnExt(appAndVersion.Version.Items[i].Name)---------", utils.UnExt(appAndVersion.Version.Items[i].Name))
+
+			version := utils.UnExt(appAndVersion.Version.Items[i].Name)
+			versionList = append(versionList, version)
+
+		}
+	}
+	//正序排序
+	sort.Strings(versionList)
+	//反转
+	for i, j := 0, len(versionList)-1; i < j; i, j = i+1, j-1 {
+		versionList[i], versionList[j] = versionList[j], versionList[i]
+	}
+	res.VersionList = versionList
 
 	c.JSON(http.StatusOK, res)
 

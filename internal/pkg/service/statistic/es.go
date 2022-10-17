@@ -94,6 +94,7 @@ LOOP:
 				AppName:      v.Source.EventAppName,
 				CipherType:   v.Source.EventDType,
 				CipherSerial: v.Source.EventSerial,
+				ApiType:      v.Source.EventType,
 				StartTime:    startTime,
 				EndTime:      endTime,
 				Total:        1,

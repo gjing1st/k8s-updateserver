@@ -13,7 +13,7 @@ k8s:
     #别名
     aliasname: dked
     desc: 笛卡尔盾
-  url: http://192.168.0.80:31601
+  url: http://192.168.0.80:31177
   #企业空间中的项目名称对应k8s命名空间
   namespace: 
     name: csmp

@@ -32,8 +32,8 @@ var Config = struct {
 
 var K8sConfig = struct {
 	K8s struct {
-		Url string `default:"http://ks-apiserver.kubesphere-system.svc"`
-		//Url string `default:"http://192.168.0.80:31601"`
+		//Url string `default:"http://ks-apiserver.kubesphere-system.svc"`
+		Url string `default:"http://192.168.0.80:31177"`
 		//Namespace string `default:"csmp"`
 		//Workspace string `default:"dked"`
 		Username  string `default:"csmp"`
@@ -86,7 +86,7 @@ var KubeToolConfig = struct {
 			Desc      string `default:"企业空间"`
 		}
 		//Url string `default:"http://ks-apiserver.kubesphere-system.svc"`
-		Url       string `default:"http://192.168.0.80:31601"`
+		Url       string `default:"http://192.168.0.80:31177"`
 		Namespace struct {
 			Name      string `default:"csmp"`
 			Aliasname string `default:"csmp-space"`

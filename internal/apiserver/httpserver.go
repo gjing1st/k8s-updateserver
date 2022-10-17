@@ -1,7 +1,6 @@
 package apiserver
 
 import (
-	"upserver/internal/apiserver/router/statistics"
 	v1 "upserver/internal/apiserver/router/v1"
 )
 
@@ -17,5 +16,4 @@ func HttpStart() {
 // @success:
 func run() {
 	v1.InitApi()
-	statistics.InitApi()
 }

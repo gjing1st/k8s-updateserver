@@ -17,6 +17,7 @@ func initStatisticsApi(apiV1 *gin.RouterGroup) {
 	api.POST("/cipherStatistic", statisticController.CipherStatistic)
 	api.POST("/rankingByApp", statisticController.RankingByApp)
 	api.POST("/realtime", statisticController.RealTime)
-	api.POST("/flowTotal", statisticController.FlowAndTotal)
+	api.POST("/time/flowTotal", statisticController.TimeFlowAndTotal)
+	api.POST("/type/flowTotal", statisticController.TypeFlowAndTotal)
 
 }

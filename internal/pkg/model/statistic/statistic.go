@@ -38,6 +38,7 @@ type StatisticsTable struct {
 	AppName      string    `json:"appname" bson:"app_name"`            //业务id
 	CipherType   int       `json:"cipher_type" bson:"cipher_type"`     //密码服务
 	CipherSerial string    `json:"cipher_serial" bson:"cipher_serial"` //密码资源
+	ApiType      int       `json:"api_type" bson:"api_type"`           //接口名称
 	Total        int64     `json:"total" bson:"total"`                 //调用次数
 	Flow         int       `json:"flow" bson:"flow"`                   //流量
 	StartTime    time.Time `json:"start_time" bson:"start_time"`

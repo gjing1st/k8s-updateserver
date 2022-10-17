@@ -126,14 +126,40 @@ func (sc *StatisticController) RealTime(c *gin.Context) {
 	}
 }
 
-// FlowAndTotal
+// TimeFlowAndTotal
 // @description: 调用趋势
 // @param:
 // @author: GJing
 // @email: guojing@tna.cn
 // @date: 2022/10/11 14:24
 // @success:
-func (sc *StatisticController) FlowAndTotal(c *gin.Context) {
+func (sc *StatisticController) TimeFlowAndTotal(c *gin.Context) {
+	var req request.AppFlow
+	if err := c.ShouldBindJSON(&req); err != nil {
+		//c.JSON(http.StatusBadRequest, err)
+		//return
+	}
+	if req.TimeRange < constant.TimeOneHour || req.TimeRange > constant.TimeOneYear {
+		c.JSON(http.StatusBadRequest, "时间范围错误")
+		return
+	}
+	res := statisticService.GetFlowAndTotal(req.TimeRange, req.Tid, req.Appid, req.CipherType)
+	//if err != nil {
+	//	c.JSON(http.StatusInternalServerError, "查询失败")
+	//} else {
+	//	c.JSON(http.StatusOK, res)
+	//}
+	c.JSON(http.StatusOK, res)
+}
+
+// TypeFlowAndTotal
+// @description: 按密码资源类型查询流量和次数
+// @param:
+// @author: GJing
+// @email: guojing@tna.cn
+// @date: 2022/10/12 14:37
+// @success:
+func (sc *StatisticController) TypeFlowAndTotal(c *gin.Context) {
 	var req request.AppFlow
 	if err := c.ShouldBindJSON(&req); err != nil {
 		//c.JSON(http.StatusBadRequest, err)

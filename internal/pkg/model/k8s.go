@@ -20,11 +20,11 @@ type GetVersionResponse struct {
 	Last int `json:"last"`
 }
 
-
 type GetVersionListResponse struct {
-	Appid           string `json:"appid"`
-	NowVersion      string `json:"current"`
+	Appid      string `json:"appid"`
+	NowVersion string `json:"current"`
 	k8s.VersionResponse
+	VersionList []string `json:"version_list"`
 }
 
 //UpdateVersionRequest 更新应用版本请求参数
