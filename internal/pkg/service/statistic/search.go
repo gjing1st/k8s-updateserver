@@ -14,12 +14,12 @@ import (
 	log "github.com/sirupsen/logrus"
 	"io/ioutil"
 	"net/http"
+	"statistic/internal/pkg/constant"
+	"statistic/internal/pkg/tmpl"
+	"statistic/internal/pkg/utils"
+	"statistic/internal/pkg/utils/database"
 	"strconv"
 	"strings"
-	"upserver/internal/pkg/constant"
-	"upserver/internal/pkg/tmpl"
-	"upserver/internal/pkg/utils"
-	"upserver/internal/pkg/utils/database"
 )
 
 // Search
@@ -271,6 +271,145 @@ func (ss *StatisticService) LatestQuery(msgIndex, nameSpace string, eventTid int
 	}
 	fmt.Println("====================", query["query"].(map[string]interface{})["bool"].(map[string]interface{})["must"])
 
+	res, _ = Search(query)
+
+	return
+}
+
+// RealTimeLogQuery
+// @description: 交易统计查询
+// @param:
+// @author: GJing
+// @email: guojing@tna.cn
+// @date: 2022/10/17 16:43
+// @success:
+func (ss *StatisticService) RealTimeLogQuery(msgIndex, nameSpace, filter, cipherType string, eventTid, size, page int, startTime, endTime string) (res []byte, err error) {
+	q := "" //去es查询条件
+	//if filter == "" && startTime == "" && cipherType == 0 {
+	//	//没有搜索条件,查全部
+	//	q = strings.Replace(tmpl.RealTimeLogAll, "{{msgField}}", msgIndex, 1)
+	//	eventTidStr := strconv.Itoa(eventTid)
+	//	q = strings.Replace(q, "{{eventTidField}}", eventTidStr, 1)
+	//	q = strings.Replace(q, "{{nameSpaceField}}", nameSpace, 1)
+	//}
+	if q == "" {
+		//说明有查询条件
+		q = tmpl.RealTimeLogCipherFilter
+	}
+	if startTime != "" {
+		//有时间范围查询
+		timeRange := `,
+                {
+                    "range": {
+                        "event_time": {
+                            "gte": "{{startTime}}",
+                            "lt": "{{endTime}}"
+                        }
+                    }
+                }`
+		timeRange = strings.Replace(timeRange, "{{startTime}}", startTime, 1)
+		timeRange = strings.Replace(timeRange, "{{endTime}}", endTime, 1)
+		q = strings.Replace(q, "{{rangeTime}}", timeRange, 1)
+	} else {
+		//没有时间查询
+
+		q = strings.Replace(q, "{{rangeTime}}", "", 1)
+
+	}
+	//设置类型
+	if cipherType != "" {
+		cipherTypeQuery := `,
+                {
+                    "terms": {
+                        "event_dtype": [
+                            {{cipherType}}
+                        ]
+                    }
+                }`
+
+		cipherTypeQuery = strings.Replace(cipherTypeQuery, "{{cipherType}}", cipherType, 1)
+		q = strings.Replace(q, "{{cipherType}}", cipherTypeQuery, 1)
+
+	} else {
+		q = strings.Replace(q, "{{cipherType}}", "", 1)
+	}
+	//搜索条件
+	if filter != "" {
+		var filterQuery string
+		apiArr := utils.SearchApiType(filter)
+		if len(apiArr) > 0 {
+			//需要查询接口
+			filterQuery = `,
+                {
+                    "terms": {
+                        "event_type": [
+                            {{apiTypeStr}}
+                        ]
+                    }
+                }`
+			var apiTypeStr string
+			for _, i := range apiArr {
+				apiTypeStr += "," + strconv.Itoa(i)
+			}
+			apiTypeStr = strings.Trim(apiTypeStr, ",")
+			filterQuery = strings.Replace(filterQuery, "{{apiTypeStr}}", apiTypeStr, 1)
+			//filterQuery = strings.Replace(filterQuery, "{{apiType}}", apiQuery, 1)
+
+		} else {
+			//没有对应接口需要查询
+			//先拼接业务查询
+			filterQuery = `,{
+                    "match": {
+                        "event_appname": "{{appName}}"
+                    }
+                }`
+			filterQuery = strings.Replace(filterQuery, "{{appName}}", filter, 1)
+		}
+
+		q = strings.Replace(q, "{{filter}}", filterQuery, 1)
+
+	} else {
+		q = strings.Replace(q, "{{filter}}", "", 1)
+
+	}
+
+	//租户查询
+	if eventTid != 0 {
+		eventTidQuery := `,{
+                    "match_phrase": {
+                        "event_tid": {{eventTidField}}
+                    }
+                }`
+		eventTidQuery = strings.Replace(eventTidQuery, "{{eventTidField}}", strconv.Itoa(eventTid), 1)
+		q = strings.Replace(q, "{{eventTid}}", eventTidQuery, 1)
+	} else {
+		q = strings.Replace(q, "{{eventTid}}", "", 1)
+	}
+
+	if size == 0 {
+		size = 10
+	}
+	var fromSize int
+	if page != 0 {
+		fromSize = size * (page - 1)
+	}
+	q = strings.Replace(q, "{{fromSize}}", strconv.Itoa(fromSize), 1)
+	q = strings.Replace(q, "{{size}}", strconv.Itoa(size), 1)
+
+	q = strings.Replace(q, "{{msgField}}", msgIndex, 1)
+
+	q = strings.Replace(q, "{{nameSpaceField}}", nameSpace, 1)
+	//fmt.Println(" ", q)
+
+	var query map[string]interface{}
+	err = json.Unmarshal([]byte(q), &query)
+	if err != nil {
+		log.WithFields(utils.WriteDataLogs("实时查询请求数据解析json出错", err)).Error(constant.Msg)
+		return
+	}
+	//fmt.Println("====================")
+	//fmt.Printf("#########%#v\n", query)
+	//fmt.Printf("#########%#v\n", query)
 	res, _ = Search(query)
 
 	return
