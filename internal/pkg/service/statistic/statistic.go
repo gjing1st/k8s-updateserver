@@ -12,12 +12,12 @@ import (
 	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"statistic/internal/pkg/constant"
-	"statistic/internal/pkg/model/statistic"
-	"statistic/internal/pkg/model/statistic/response"
-	"statistic/internal/pkg/utils"
-	"statistic/internal/pkg/utils/database"
 	"time"
+	"upserver/internal/pkg/constant"
+	"upserver/internal/pkg/model/statistic"
+	"upserver/internal/pkg/model/statistic/response"
+	"upserver/internal/pkg/utils"
+	"upserver/internal/pkg/utils/database"
 )
 
 // RankingByApp
@@ -29,8 +29,8 @@ import (
 // @success:
 func (ss *StatisticService) RankingByApp(startTime, endTime time.Time) (res []response.AppStatistic, err error) {
 	cli := database.GetMgoCli()
-	mgo := cli.Database(utils.Config.K8s.Statistic.MongoDatabase)
-	collection := mgo.Collection(utils.Config.K8s.Statistic.Collection)
+	mgo := cli.Database(utils.K8sConfig.K8s.Statistic.MongoDatabase)
+	collection := mgo.Collection(utils.K8sConfig.K8s.Statistic.Collection)
 
 	//groups := mongo.Pipeline{bson.D{
 	//	{"$match", bson.D{
@@ -116,8 +116,8 @@ func (ss *StatisticService) RankingByApp(startTime, endTime time.Time) (res []re
 // @success:
 func (ss *StatisticService) CipherStatistic(startTime, endTime time.Time) (res []response.CipherStatistic, err error) {
 	cli := database.GetMgoCli()
-	mgo := cli.Database(utils.Config.K8s.Statistic.MongoDatabase)
-	collection := mgo.Collection(utils.Config.K8s.Statistic.Collection)
+	mgo := cli.Database(utils.K8sConfig.K8s.Statistic.MongoDatabase)
+	collection := mgo.Collection(utils.K8sConfig.K8s.Statistic.Collection)
 	//时间范围
 	matchTimes := statistic.MatchTime{
 		statistic.StartTime{
@@ -204,8 +204,8 @@ func (ss *StatisticService) CipherStatistic(startTime, endTime time.Time) (res [
 // @success:
 func (ss *StatisticService) AppFlow(startTime, endTime time.Time) (res []response.AppFlow, err error) {
 	cli := database.GetMgoCli()
-	mgo := cli.Database(utils.Config.K8s.Statistic.MongoDatabase)
-	collection := mgo.Collection(utils.Config.K8s.Statistic.Collection)
+	mgo := cli.Database(utils.K8sConfig.K8s.Statistic.MongoDatabase)
+	collection := mgo.Collection(utils.K8sConfig.K8s.Statistic.Collection)
 	//查询
 	//var matchs statistic.Match
 	//var matchsIfc []interface{}
@@ -270,7 +270,7 @@ func (ss *StatisticService) Realtime(msg, nameSpace string, eventTid, size int) 
 		msg = "mmyypt_app_events"
 	}
 	if nameSpace == "" {
-		nameSpace = utils.Config.K8s.Namespace.Name
+		nameSpace = utils.K8sConfig.K8s.Namespace.Name
 	}
 	esRes, err := ss.RealTimeQuery(msg, nameSpace, eventTid)
 	var realtimeRes statistic.RealTimeResponse
@@ -334,27 +334,27 @@ func (ss StatisticService) LastData() (s *statistic.StatisticsTable) {
 // @email: guojing@tna.cn
 // @date: 2022/10/9 18:24
 // @success:
-func (ss StatisticService) SumFlowAndTotal(startTime, endTime time.Time, tenantId int, appid string, cipherType int, cipherSerial string) (res statistic.FlowAndTotal) {
+func (ss StatisticService) SumFlowAndTotal(startTime, endTime time.Time, tenantId int, appid string, cipherType int) (res statistic.FlowAndTotal) {
 	collection := database.GetCollection()
 	//查询条件
-	//filter := bson.D{}
-	////时间范围
-	//var eventTime bson.E
-	//eventTime = bson.E{"event_time", bson.D{{"$gte", startTime.Unix()}, {"$lt", endTime.Unix()}}}
-	//filter = append(filter, eventTime)
-	//if tenantId > 0 {
-	//	filter = append(filter, bson.E{"tenant_id", tenantId})
-	//}
-	//if appid != "" {
-	//	filter = append(filter, bson.E{"appid", appid})
-	//}
-	//if cipherType > 0 {
-	//	filter = append(filter, bson.E{"cipher_type", cipherType})
-	//}
+	filter := bson.D{}
+	//时间范围
+	var eventTime bson.E
+	eventTime = bson.E{"event_time", bson.D{{"$gte", startTime.Unix()}, {"$lt", endTime.Unix()}}}
+	filter = append(filter, eventTime)
+	if tenantId > 0 {
+		filter = append(filter, bson.E{"tenant_id", tenantId})
+	}
+	if appid != "" {
+		filter = append(filter, bson.E{"appid", appid})
+	}
+	if cipherType > 0 {
+		filter = append(filter, bson.E{"cipher_type", cipherType})
+	}
 	//分组
 	//group := bson.E{"total", bson.E{"$sum", "$flow"}}
 	//filter = append(filter, group)
-	filter := PackageMatch(startTime, endTime, tenantId, appid, cipherType, cipherSerial)
+
 	fmt.Println("filter", filter)
 	pipeline := bson.A{
 		bson.D{{"$match", filter}},
@@ -404,7 +404,7 @@ func (ss StatisticService) SumFlowAndTotal(startTime, endTime time.Time, tenantI
 // @email: guojing@tna.cn
 // @date: 2022/10/10 18:47
 // @success:
-func (ss StatisticService) GetFlowAndTotal(timeRange, tenantId int, appid string, cipherType int, cipherSerial string) (res response.FlowAndTotal) {
+func (ss StatisticService) GetFlowAndTotal(timeRange, tenantId int, appid string, cipherType int) (res response.FlowAndTotal) {
 	var startTime, endTime time.Time
 	//var res [constant.TimeLen]response.FlowAndTotal
 	now := time.Now()
@@ -425,7 +425,7 @@ func (ss StatisticService) GetFlowAndTotal(timeRange, tenantId int, appid string
 			} else {
 				endTime = now
 			}
-			flowTotal := ss.SumFlowAndTotal(startTime, endTime, tenantId, appid, cipherType, cipherSerial)
+			flowTotal := ss.SumFlowAndTotal(startTime, endTime, tenantId, appid, cipherType)
 			//放入结果集
 			res.Time = append(res.Time, endTime)
 			res.Flow = append(res.Flow, flowTotal.Flow)
@@ -441,7 +441,7 @@ func (ss StatisticService) GetFlowAndTotal(timeRange, tenantId int, appid string
 			} else {
 				endTime = now
 			}
-			flowTotal := ss.SumFlowAndTotal(startTime, endTime, tenantId, appid, cipherType, cipherSerial)
+			flowTotal := ss.SumFlowAndTotal(startTime, endTime, tenantId, appid, cipherType)
 			//放入结果集
 			res.Time = append(res.Time, endTime)
 			res.Flow = append(res.Flow, flowTotal.Flow)
@@ -457,7 +457,7 @@ func (ss StatisticService) GetFlowAndTotal(timeRange, tenantId int, appid string
 			} else {
 				endTime = now
 			}
-			flowTotal := ss.SumFlowAndTotal(startTime, endTime, tenantId, appid, cipherType, cipherSerial)
+			flowTotal := ss.SumFlowAndTotal(startTime, endTime, tenantId, appid, cipherType)
 			//放入结果集
 			res.Time = append(res.Time, endTime)
 			res.Flow = append(res.Flow, flowTotal.Flow)
@@ -468,439 +468,4 @@ func (ss StatisticService) GetFlowAndTotal(timeRange, tenantId int, appid string
 
 	//fmt.Println(res)
 	return res
-}
-
-// CalculateFlowOrTotal
-// @description:
-// @param: timeRange int 最近时间范围
-// @param: calculateType int 计算类型 1调用次数 2流量
-// @author: GJing
-// @email: guojing@tna.cn
-// @date: 2022/10/12 16:48
-// @success:
-func (ss *StatisticService) CalculateFlowOrTotal(timeRange, calculateType, tenantId int, appid string, cipherType int, cipherSerial string) (list []response.Calculate, err error) {
-	//var res = make(map[string]interface{})
-	//var totalCipher, totalApi []statistic.FlowTotal
-	var totalApi []statistic.FlowTotal
-	startTime, endTime, err1 := CalculateTimeRange(timeRange)
-	if err1 != nil {
-		return list, constant.ErrTimeRange
-	}
-	if calculateType == constant.CalculateTypeTotal {
-		//调用次数
-		//totalCipher = ss.SumTotalGroupFiled(startTime, endTime, tenantId, appid, cipherType, "$cipher_type")
-		totalApi = ss.SumTotalGroupFiled(startTime, endTime, tenantId, appid, cipherType, cipherSerial, "$api_type")
-
-	} else if calculateType == constant.CalculateTypeFlow {
-		//业务流量
-		//totalCipher = ss.SumFlowGroupFiled(startTime, endTime, tenantId, appid, cipherType, "$cipher_type")
-		totalApi = ss.SumFlowGroupFiled(startTime, endTime, tenantId, appid, cipherType, cipherSerial, "$api_type")
-
-	}
-	//res["cipher"] = totalCipher
-	//res["api"] = totalApi
-	//list = res
-	var tempRes = make(map[int]response.Calculate)
-	for i := 0; i < len(totalApi); i++ {
-
-		switch totalApi[i].Id {
-		case constant.ApiTypeSm4Encrypt, constant.ApiTypeSm4Decrypt, constant.ApiTypeSm3HMAC, constant.ApiTypeSm3HMACVerify, constant.ApiTypeSm2Sign, constant.ApiTypeSm2SignVerify:
-			//密码机相关接口
-			var value int
-			if calculateType == constant.CalculateTypeTotal {
-				//调用次数
-				value = totalApi[i].Total
-			} else if calculateType == constant.CalculateTypeFlow {
-				//业务流量
-				value = totalApi[i].Flow
-			}
-			//当前接口使用情况
-			apiValue := response.ApiValue{
-				Name:  constant.ApiType[totalApi[i].Id],
-				Value: value,
-			}
-			if v, ok := tempRes[constant.TypeCipher]; ok {
-				//密码机已有数据
-				calculateData := append(v.Data, apiValue)
-				tempRes[constant.TypeCipher] = response.Calculate{
-					Name: constant.CipherType[constant.TypeCipher],
-					//Data: calculateData,
-					Data: calculateData,
-				}
-
-			} else {
-				//创建密码机数据
-				tempRes[constant.TypeCipher] = response.Calculate{
-					Name: constant.CipherType[constant.TypeCipher],
-					Data: append([]response.ApiValue{}, apiValue),
-				}
-			}
-
-		case constant.ApiTypeTimeStampCreate, constant.ApiTypeTimeStampVerify, constant.ApiTypeTimeStampParse:
-			//时间戳
-			var value int
-			if calculateType == constant.CalculateTypeTotal {
-				//调用次数
-				value = totalApi[i].Total
-			} else if calculateType == constant.CalculateTypeFlow {
-				//业务流量
-				value = totalApi[i].Flow
-			}
-			//当前接口使用情况
-			apiValue := response.ApiValue{
-				Name:  constant.ApiType[totalApi[i].Id],
-				Value: value,
-			}
-			if v, ok := tempRes[constant.TypeTimeStamp]; ok {
-				//密码机已有数据
-				calculateData := append(v.Data, apiValue)
-				tempRes[constant.TypeTimeStamp] = response.Calculate{
-					Name: constant.CipherType[constant.TypeTimeStamp],
-					//Data: calculateData,
-					Data: calculateData,
-				}
-
-			} else {
-				//创建密码机数据
-				tempRes[constant.TypeTimeStamp] = response.Calculate{
-					Name: constant.CipherType[constant.TypeTimeStamp],
-					Data: append([]response.ApiValue{}, apiValue),
-				}
-			}
-		}
-
-	}
-	//var res []response.Calculate
-	for _, v := range tempRes {
-		list = append(list, v)
-	}
-	//list = res
-	return
-}
-
-// SumFlowGroupCipherType
-// @description: 按密码资源类型查询使用流量
-// @param:
-// @author: GJing
-// @email: guojing@tna.cn
-// @date: 2022/10/12 17:03
-// @success:
-func (ss *StatisticService) SumFlowGroupCipherType(startTime, endTime time.Time, tenantId int, appid string, cipherType int, cipherSerial string) (res []statistic.FlowTotal) {
-	collection := database.GetCollection()
-	filter := PackageMatch(startTime, endTime, tenantId, appid, cipherType, cipherSerial)
-	pipeline := bson.A{
-		bson.D{{"$match", filter}},
-		bson.D{
-			{"$group", bson.D{
-				{"_id", "$cipher_type"},
-				{"flow", bson.D{
-					{"$sum", "$flow"},
-				}},
-			}},
-		},
-		//bson.D{{"$sort", bson.D{{"_id", 1}}}},
-	}
-	cursor, err := collection.Aggregate(context.Background(), pipeline)
-	if err != nil {
-		log.WithFields(utils.WriteDataLogs("查询mongodb失败", err)).Error(constant.Msg)
-		return
-	}
-	if err = cursor.All(context.Background(), &res); err != nil {
-		log.Fatal(err)
-	}
-	return
-}
-
-// SumTotalGroupCipherType
-// @description: 按密码资源类型查询调用次数
-// @param:
-// @author: GJing
-// @email: guojing@tna.cn
-// @date: 2022/10/12 17:31
-// @success:
-func (ss *StatisticService) SumTotalGroupCipherType(startTime, endTime time.Time, tenantId int, appid string, cipherType int, cipherSerial string) (res []statistic.FlowTotal) {
-	collection := database.GetCollection()
-	////查询条件
-	//filter := bson.D{}
-	//
-	////时间范围
-	//var eventTime bson.E
-	//eventTime = bson.E{"event_time", bson.D{{"$gte", startTime.Unix()}, {"$lt", endTime.Unix()}}}
-	//filter = append(filter, eventTime)
-	filter := PackageMatch(startTime, endTime, tenantId, appid, cipherType, cipherSerial)
-	pipeline := bson.A{
-		bson.D{{"$match", filter}},
-		bson.D{
-			{"$group", bson.D{
-				{"_id", "$cipher_type"},
-				{"total", bson.D{
-					{"$sum", "$total"},
-				}},
-			}},
-		},
-		//bson.D{{"$sort", bson.D{{"_id", 1}}}},
-	}
-	cursor, err := collection.Aggregate(context.Background(), pipeline)
-	if err != nil {
-		log.WithFields(utils.WriteDataLogs("查询mongodb失败", err)).Error(constant.Msg)
-		return
-	}
-	if err = cursor.All(context.Background(), &res); err != nil {
-		log.Fatal(err)
-	}
-	return
-}
-
-// SumTotalGroupFiled
-// @description: 根据分组字段求和调用次数
-// @param: field 要分组的字段
-// @author: GJing
-// @email: guojing@tna.cn
-// @date: 2022/10/13 15:08
-// @success:
-func (ss *StatisticService) SumTotalGroupFiled(startTime, endTime time.Time, tenantId int, appid string, cipherType int, cipherSerial, field string) (res []statistic.FlowTotal) {
-	collection := database.GetCollection()
-	////查询条件
-	filter := PackageMatch(startTime, endTime, tenantId, appid, cipherType, cipherSerial)
-	groupField := "null"
-	if field != "" {
-		groupField = field
-	}
-	pipeline := bson.A{
-		bson.D{{"$match", filter}},
-		bson.D{
-			{"$group", bson.D{
-				{"_id", groupField},
-				{"total", bson.D{
-					{"$sum", "$total"},
-				}},
-			}},
-		},
-		//bson.D{{"$sort", bson.D{{"_id", 1}}}},
-	}
-	cursor, err := collection.Aggregate(context.Background(), pipeline)
-	if err != nil {
-		log.WithFields(utils.WriteDataLogs("查询mongodb失败", err)).Error(constant.Msg)
-		return
-	}
-	if err = cursor.All(context.Background(), &res); err != nil {
-		log.Fatal(err)
-	}
-	return
-}
-
-// SumFlowGroupFiled
-// @description: 根据分组字段求和流量
-// @param:
-// @author: GJing
-// @email: guojing@tna.cn
-// @date: 2022/10/13 15:13
-// @success:
-func (ss *StatisticService) SumFlowGroupFiled(startTime, endTime time.Time, tenantId int, appid string, cipherType int, cipherSerial, field string) (res []statistic.FlowTotal) {
-	collection := database.GetCollection()
-	////查询条件
-	filter := PackageMatch(startTime, endTime, tenantId, appid, cipherType, cipherSerial)
-	//要分组的字段
-	groupField := "null"
-	if field != "" {
-		groupField = field
-	}
-	pipeline := bson.A{
-		bson.D{{"$match", filter}},
-		bson.D{
-			{"$group", bson.D{
-				{"_id", groupField},
-				{"flow", bson.D{
-					{"$sum", "$flow"},
-				}},
-			}},
-		},
-		//bson.D{{"$sort", bson.D{{"_id", 1}}}},
-	}
-	cursor, err := collection.Aggregate(context.Background(), pipeline)
-	if err != nil {
-		log.WithFields(utils.WriteDataLogs("查询mongodb失败", err)).Error(constant.Msg)
-		return
-	}
-	if err = cursor.All(context.Background(), &res); err != nil {
-		log.Fatal(err)
-	}
-	return
-}
-
-// Ranking
-// @description: 调用排名
-// @param: timeRange int 最近时间范围
-// @param: rankingType int 排名类型 1业务 2租户
-// @param: calculateType int 计算类型 1调用次数 2流量
-// @author: GJing
-// @email: guojing@tna.cn
-// @date: 2022/10/13 15:44
-// @success:
-func (ss StatisticService) Ranking(timeRange, rankingType, calculateType, tenantId int, appid string, cipherType int, cipherSerial string) (list interface{}, err error) {
-	startTime, endTime, err := CalculateTimeRange(timeRange)
-	if err != nil {
-		return
-	}
-	var res []statistic.XY
-	if rankingType == constant.RankingApp {
-		//业务排名
-		switch calculateType {
-		case constant.CalculateTypeTotal:
-			//调用次数
-			res = ss.SumGroupField(startTime, endTime, tenantId, appid, cipherType, cipherSerial, "$app_name", "$total")
-		case constant.CalculateTypeFlow:
-			//业务流量
-			res = ss.SumGroupField(startTime, endTime, tenantId, appid, cipherType, cipherSerial, "$app_name", "$flow")
-		default:
-			return list, constant.ErrCalculateType
-
-		}
-	} else if rankingType == constant.RankingTenant {
-		//租户排名
-		switch calculateType {
-		case constant.CalculateTypeTotal:
-			//调用次数
-			res = ss.SumGroupField(startTime, endTime, tenantId, appid, cipherType, cipherSerial, "$tenant_id", "$total")
-
-		case constant.CalculateTypeFlow:
-			//业务流量
-			res = ss.SumGroupField(startTime, endTime, tenantId, appid, cipherType, cipherSerial, "$tenant_id", "$flow")
-		default:
-			return list, constant.ErrCalculateType
-
-		}
-	} else {
-		return list, constant.ErrRankingType
-	}
-	if len(res) > 0 {
-		var ranking response.Ranking
-		for i := 0; i < len(res); i++ {
-			ranking.X = append(ranking.X, res[i].X)
-			ranking.Y = append(ranking.Y, res[i].Y)
-		}
-		list = ranking
-	}
-	return
-}
-
-// CalculateTimeRange
-// @description: 根据前端传入的时间，计算要查询的开始时间和结束时间
-// @param:
-// @author: GJing
-// @email: guojing@tna.cn
-// @date: 2022/10/13 15:27
-// @success:
-func CalculateTimeRange(timeRange int) (startTime, endTime time.Time, err error) {
-	endTime = time.Now()
-	switch timeRange {
-	case constant.TimeOneHour, constant.TimeTwelveHour, constant.TimeOneDay:
-		//一小时，12小时，1天。减掉小时
-		startTime = endTime.Add(time.Duration(constant.TimeRange[timeRange][1]))
-	case constant.TimeOneWeek, constant.TimeOneMonth, constant.TimeThreeMonth:
-		//一周，一月，三个月。减掉天数
-		startTime = endTime.AddDate(0, 0, int(constant.TimeRange[timeRange][1]))
-	case constant.TimeOneYear:
-		//一年的。减掉月数
-		startTime = endTime.AddDate(0, int(constant.TimeRange[timeRange][1]), 0)
-	default:
-		return startTime, endTime, constant.ErrTimeRange
-	}
-	return
-}
-
-// SumGroupField
-// @description: 调用排名接口sum和group字段动态传入
-// @param:
-// @author: GJing
-// @email: guojing@tna.cn
-// @date: 2022/10/13 16:07
-// @success:
-func (ss StatisticService) SumGroupField(startTime, endTime time.Time, tenantId int, appid string, cipherType int, cipherSerial, groupField, sumField string) (res []statistic.XY) {
-	collection := database.GetCollection()
-	//查询条件
-	filter := PackageMatch(startTime, endTime, tenantId, appid, cipherType, cipherSerial)
-	//要分组的字段
-	if groupField == "" {
-		groupField = "null"
-	}
-	if sumField == "" {
-		sumField = "$total"
-	}
-	pipeline := bson.A{
-		bson.D{{"$match", filter}},
-		bson.D{
-			{"$group", bson.D{
-				{"_id", groupField},
-				{"x", bson.D{
-					{"$sum", sumField},
-				}},
-			}},
-		},
-		//bson.D{{"$sort", bson.D{{"_id", 1}}}},
-	}
-	cursor, err := collection.Aggregate(context.Background(), pipeline)
-	if err != nil {
-		log.WithFields(utils.WriteDataLogs("查询mongodb失败", err)).Error(constant.Msg)
-		return
-	}
-	if err = cursor.All(context.Background(), &res); err != nil {
-		log.Fatal(err)
-	}
-	return res
-}
-
-// CipherServer
-// @description: 调用排名
-// @param: timeRange int 最近时间范围
-// @param: rankingType int 排名类型 1业务 2租户
-// @param: calculateType int 计算类型 1调用次数 2流量
-// @author: GJing
-// @email: guojing@tna.cn
-// @date: 2022/10/13 15:44
-// @success:
-func (ss StatisticService) CipherServer(timeRange, tenantId int, appid string, cipherType int, cipherSerial string) (list interface{}, err error) {
-	//var totalArr []int
-	switch cipherType {
-	case constant.TypeCipher, constant.TypeCloudCipher:
-		list, err = ss.CipherServerApi(timeRange, tenantId, appid, cipherType, cipherSerial)
-	case constant.TypeTimeStamp:
-		list, err = ss.TimeStampApi(timeRange, tenantId, appid, cipherType, cipherSerial)
-
-	}
-	return
-}
-
-// SumCipherApi
-// @description: 设备概览，服务次数
-// @param:
-// @author: GJing
-// @email: guojing@tna.cn
-// @date: 2022/10/18 15:30
-// @success:
-func (ss StatisticService) SumCipherApi(startTime, endTime time.Time, tenantId int, appid string, cipherType int, cipherSerial string) (res []statistic.CipherApi, err error) {
-	collection := database.GetCollection()
-	filter := PackageMatch(startTime, endTime, tenantId, appid, cipherType, cipherSerial)
-	pipeline := bson.A{
-		bson.D{{"$match", filter}},
-		bson.D{
-			{"$group", bson.D{
-				{"_id", "$api_type"},
-				{"total", bson.D{
-					{"$sum", "$total"},
-				}},
-			}},
-		},
-		//bson.D{{"$sort", bson.D{{"_id", 1}}}},
-	}
-	cursor, err1 := collection.Aggregate(context.Background(), pipeline)
-	if err1 != nil {
-		err = err1
-		log.WithFields(utils.WriteDataLogs("查询mongodb失败", err)).Error(constant.Msg)
-		return
-	}
-	if err = cursor.All(context.Background(), &res); err != nil {
-		log.WithFields(log.Fields{"err": err, "解析错误": "查询mongodb转换失败"}).Error()
-	}
-	return
 }

@@ -8,10 +8,10 @@ package statistic
 import (
 	"encoding/json"
 	"fmt"
-	"statistic/internal/pkg/model/statistic"
-	"statistic/internal/pkg/utils"
 	"testing"
 	"time"
+	"upserver/internal/pkg/model/statistic"
+	"upserver/internal/pkg/utils"
 )
 
 var ss StatisticService
@@ -58,7 +58,7 @@ func TestTime(t *testing.T) {
 func TestLatest(t *testing.T) {
 	now := time.Now()
 	endTime, _ := now.MarshalJSON()
-	startTime, _ := now.Add(time.Second * time.Duration(utils.Config.K8s.Statistic.CrontabTime) * -1).MarshalJSON()
+	startTime, _ := now.Add(time.Second * time.Duration(utils.K8sConfig.K8s.Statistic.CrontabTime) * -1).MarshalJSON()
 	fmt.Println(string(endTime))
 	fmt.Println(string(startTime))
 	res, _ := ss.LatestQuery("mmyypt_app_events", "csmp", 0, string(startTime), string(endTime), 0, 10)
@@ -84,22 +84,4 @@ func TestAppFlow(t *testing.T) {
 func TestLastQuery(t *testing.T) {
 	s := ss.LastData()
 	fmt.Println(s)
-}
-
-type Ta struct {
-	Name   string  `json:"name,omitempty"`
-	Age    string  `json:"age,omitempty"`
-	Person *Person `json:"person,omitempty"`
-}
-
-type Person struct {
-	Sex   string `json:"sex,omitempty"`
-	Phone string `json:"phone,omitempty"`
-}
-
-func TestTa(t *testing.T) {
-	var ta Ta
-	ta = Ta{Name: "qq"}
-	js, _ := json.Marshal(ta)
-	fmt.Println(string(js))
 }

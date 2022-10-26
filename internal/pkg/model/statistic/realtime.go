@@ -44,14 +44,14 @@ type RealTimeHits struct {
 }
 type RealTimeSource struct {
 	Timestamp    string     `json:"@timestamp"`
-	EventAppid   string     `json:"event_appid"`   //业务id
-	EventAppName string     `json:"event_appname"` //业务名称
-	EventClient  string     `json:"event_client"`  //调用者的IP
+	EventAppid   string     `json:"event_appid"`
+	EventAppName string     `json:"event_appname"`
+	EventClient  string     `json:"event_client"`
 	EventData    int        `json:"event_data"`
-	EventDType   int        `json:"event_dtype"`  //设备类型
-	EventInfo    string     `json:"event_info"`   //
-	EventSerial  string     `json:"event_serial"` //设备序列号
-	EventTid     int        `json:"event_tid"`    //租户id
+	EventDType   int        `json:"event_dtype"`
+	EventInfo    string     `json:"event_info"`
+	EventSerial  string     `json:"event_serial"`
+	EventTid     int        `json:"event_tid"`
 	EventTime    time.Time  `json:"event_time"`
 	EventType    int        `json:"event_type"` //对应接口
 	Level        string     `json:"level"`

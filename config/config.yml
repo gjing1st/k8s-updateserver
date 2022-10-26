@@ -9,6 +9,9 @@ log:
   dir: ./log
 #镜像存放目录
 path: /tmp
+# 未能读取到, 这里使用config中的default
+# VersionInfoPath: /home/upserver
+# versionInfoFlleNamePrefix: versionInfo
 harbor:
   address: http://core.harbor.dked:30002
   admin: admin

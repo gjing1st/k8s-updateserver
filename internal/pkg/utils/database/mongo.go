@@ -11,7 +11,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"statistic/internal/pkg/utils"
+	"upserver/internal/pkg/utils"
 )
 
 var mgoCli *mongo.Client
@@ -26,17 +26,17 @@ var mgoCli *mongo.Client
 func InitMgo() {
 	var err error
 	//clientOptions := options.Client().ApplyURI("mongodb://localhost:27017")
-	clientOptions := options.Client().ApplyURI(fmt.Sprintf("mongodb://%s", utils.Config.K8s.Statistic.MongoHost))
+	clientOptions := options.Client().ApplyURI(fmt.Sprintf("mongodb://%s", utils.K8sConfig.K8s.Statistic.MongoHost))
 
 	// 连接到MongoDB
 	mgoCli, err = mongo.Connect(context.TODO(), clientOptions)
 	if err != nil {
-		log.WithFields(log.Fields{"err": err.Error()}).Panic("mongo数据库连接失败")
+		log.WithFields(log.Fields{"err": err.Error()}).Panic(DriverMongo + "数据库连接失败")
 	}
 	// 检查连接
 	err = mgoCli.Ping(context.TODO(), nil)
 	if err != nil {
-		log.WithFields(log.Fields{"err": err.Error()}).Panic("mongo连接失败")
+		log.WithFields(log.Fields{"err": err.Error()}).Panic(DriverMongo + "连接失败")
 	}
 }
 
@@ -63,7 +63,7 @@ func GetMgoCli() *mongo.Client {
 // @success:
 func GetCollection() *mongo.Collection {
 	cli := GetMgoCli()
-	mgo := cli.Database(utils.Config.K8s.Statistic.MongoDatabase)
-	collection := mgo.Collection(utils.Config.K8s.Statistic.Collection)
+	mgo := cli.Database(utils.K8sConfig.K8s.Statistic.MongoDatabase)
+	collection := mgo.Collection(utils.K8sConfig.K8s.Statistic.Collection)
 	return collection
 }

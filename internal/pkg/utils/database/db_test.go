@@ -12,8 +12,8 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"testing"
-	statistic2 "statistic/internal/pkg/model/statistic"
-	"statistic/internal/pkg/service/statistic"
+	statistic2 "upserver/internal/pkg/model/statistic"
+	"upserver/internal/pkg/service/statistic"
 )
 
 type TimePorint struct {

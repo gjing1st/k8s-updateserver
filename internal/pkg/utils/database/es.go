@@ -8,7 +8,7 @@ package database
 import (
 	"github.com/elastic/go-elasticsearch/v7"
 	log "github.com/sirupsen/logrus"
-	"statistic/internal/pkg/utils"
+	"upserver/internal/pkg/utils"
 )
 
 var esClient *elasticsearch.Client
@@ -21,10 +21,10 @@ var esClient *elasticsearch.Client
 // @success:
 func EsInit() {
 	var err error
-	utils.Config.K8s.ElasticSearch.Address = "http://192.168.8.122:30706"
+	//utils.K8sConfig.K8s.ElasticSearch.Address = "http://192.168.0.80:31199"
 	cfg := elasticsearch.Config{
 		Addresses: []string{
-			utils.Config.K8s.ElasticSearch.Address,
+			utils.K8sConfig.K8s.ElasticSearch.Address,
 		},
 		// ...
 	}

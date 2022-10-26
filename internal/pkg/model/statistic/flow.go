@@ -31,25 +31,3 @@ type FlowAndTotal struct {
 	Flow  int `json:"flow" bson:"flow"`
 	Total int `json:"total" bson:"total"`
 }
-
-type FlowTotal struct {
-	Flow  int `json:"flow" bson:"flow"`
-	Total int `json:"total" bson:"total"`
-	Id    int `json:"cipher_type" bson:"_id"`
-}
-
-type XY struct {
-	X int         `bson:"x" json:"x"`
-	Y interface{} `bson:"_id" json:"y"`
-}
-
-//CipherApi 服务次数
-type CipherApi struct {
-	Total   int `json:"total" bson:"total"`
-	ApiType int `json:"api_type" bson:"_id"`
-}
-
-type CipherUsage struct {
-	Total        int    `json:"total" bson:"total"`
-	CipherSerial string `json:"_id" bson:"_id"`
-}

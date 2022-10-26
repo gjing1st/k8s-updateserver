@@ -14,17 +14,17 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
-	"golang.org/x/crypto/ssh"
 	"io"
 	"log"
 	"math"
 	"os"
 	"os/exec"
 	"path/filepath"
-	"statistic/internal/pkg/constant"
 	"strconv"
 	"strings"
 	"sync"
+
+	"golang.org/x/crypto/ssh"
 )
 
 // Md5
@@ -366,13 +366,65 @@ func WriteFile(fileName, s string) (err error) {
 	return
 }
 
-func SearchApiType(str string) []int {
-	var arr []int
-	for i := 0; i < len(constant.ApiType); i++ {
-		n := strings.Index(constant.ApiType[i], str)
-		if n > -1 {
-			arr = append(arr, i)
-		}
+// PathExists
+// @description: 判断文件是否存在
+// @param:
+// @author: Zq
+// @email: zhengqiang@tna.cn
+// @date: 2022/10/19 17:52
+// @success:
+func PathExists(path string) (bool, error) {
+	_, err := os.Stat(path)
+	if err == nil {
+		return true, nil
 	}
-	return arr
+	if os.IsNotExist(err) {
+		return false, nil
+	}
+	return false, err
+}
+
+// RunCmd
+// @description: 运行liunx 命令并且返回数据
+// @param:
+// @author: Zq
+// @email: zhengqiang@tna.cn
+// @date: 2022/10/19
+func RunCmd(cmdStr string) string {
+	list := strings.Split(cmdStr, " ")
+	cmd := exec.Command(list[0], list[1:]...)
+	var out bytes.Buffer
+	var stderr bytes.Buffer
+	cmd.Stdout = &out
+	cmd.Stderr = &stderr
+	err := cmd.Run()
+	// fmt.Println("err=====:",err,"=======",cmd.String())
+	if err != nil {
+		return stderr.String()
+	} else {
+		return out.String()
+	}
+}
+
+
+// WriteFile
+// @description: 追加写
+// @param:
+// @author: Zq
+// @email: guojing@tna.cn
+// @date: 2022/9/2 17:52
+// @success:
+func WriteFileAppend(fileName, s string) (err error) {
+	file, err := os.OpenFile(fileName, os.O_WRONLY|os.O_APPEND, os.ModePerm)
+	if err != nil {
+		log.Println("文件打开失败", err)
+		return
+	}
+	//及时关闭file句柄
+	defer file.Close()
+	//写入文件时，使用带缓存的 *Writer
+	write := bufio.NewWriter(file)
+	_, err = write.WriteString(s)
+	write.Flush()
+	return
 }

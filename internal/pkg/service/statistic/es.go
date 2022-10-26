@@ -10,14 +10,14 @@ import (
 	"encoding/json"
 	"fmt"
 	log "github.com/sirupsen/logrus"
-	"statistic/internal/pkg/constant"
-	"statistic/internal/pkg/model/statistic"
-	"statistic/internal/pkg/utils"
-	"statistic/internal/pkg/utils/crontab"
-	"statistic/internal/pkg/utils/database"
 	"strconv"
 	"sync"
 	"time"
+	"upserver/internal/pkg/constant"
+	"upserver/internal/pkg/model/statistic"
+	"upserver/internal/pkg/utils"
+	"upserver/internal/pkg/utils/crontab"
+	"upserver/internal/pkg/utils/database"
 )
 
 type StatisticService struct {
@@ -43,11 +43,11 @@ func Cron() {
 	endTimeStr, _ := endTime.MarshalJSON()
 	if !rollback {
 		//上次执行成功，开始时间使用2分钟前的时间
-		startTime = endTime.Add(time.Second * time.Duration(utils.Config.K8s.Statistic.CrontabTime) * -1)
+		//startTime = endTime.Add(time.Second * time.Duration(utils.K8sConfig.K8s.Statistic.CrontabTime) * -1)
 		//FIXME 此处为了测试修改时间
-		//startTime = endTime.Add(100 * time.Hour * time.Duration(utils.Config.K8s.Statistic.CrontabTime) * -1)
+		startTime = endTime.Add(100 * time.Hour * time.Duration(utils.K8sConfig.K8s.Statistic.CrontabTime) * -1)
+		startTimeStr, _ = startTime.MarshalJSON()
 	}
-	startTimeStr, _ = startTime.MarshalJSON()
 	var ss StatisticService
 	var from, num int
 	//用于存放临时数据，来验证定时任务期间的数据 租户  业务  密码服务  密码资源
@@ -120,9 +120,9 @@ LOOP:
 		statisticArr = append(statisticArr, v)
 	}
 	cli := database.GetMgoCli()
-	fmt.Println("==========", utils.Config.K8s.Statistic.MongoDatabase)
-	mgo := cli.Database(utils.Config.K8s.Statistic.MongoDatabase)
-	collection := mgo.Collection(utils.Config.K8s.Statistic.Collection)
+	fmt.Println("==========", utils.K8sConfig.K8s.Statistic.MongoDatabase)
+	mgo := cli.Database(utils.K8sConfig.K8s.Statistic.MongoDatabase)
+	collection := mgo.Collection(utils.K8sConfig.K8s.Statistic.Collection)
 	_, err = collection.InsertMany(context.TODO(), statisticArr)
 	if err != nil {
 		log.WithFields(utils.WriteDataLogs("数据写入mongodb失败", err)).Error(constant.Msg)
@@ -142,7 +142,7 @@ LOOP:
 // @date: 2022/9/13 20:27
 // @success:
 func AddCron() {
-	seconds := utils.Config.K8s.Statistic.CrontabTime
+	seconds := utils.K8sConfig.K8s.Statistic.CrontabTime
 	//seconds = 120
 	fmt.Println("定时任务设置时间seconds=", seconds)
 	crontab.AddSecondFunc(seconds, Cron)
@@ -162,9 +162,6 @@ func EsDataMarshal(startTime, endTime string, from int) {
 func InitCheckMongoData() {
 	//首次运行，全量获取数据
 	filter := StatisticService{}.LastData()
-	fmt.Println("=============")
-	fmt.Println(filter.CreateTime)
-	fmt.Println(time.Now().String())
 	if filter.CreateTime.IsZero() {
 		rollback = true
 		//开始时间，无特殊意义

@@ -2,8 +2,9 @@ package controller
 
 import (
 	"bytes"
-	"github.com/gin-gonic/gin"
-	log "github.com/sirupsen/logrus"
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"os/exec"
@@ -15,6 +16,9 @@ import (
 	"upserver/internal/pkg/k8s"
 	"upserver/internal/pkg/service"
 	"upserver/internal/pkg/utils"
+
+	"github.com/gin-gonic/gin"
+	log "github.com/sirupsen/logrus"
 )
 
 var harborService service.HarborService
@@ -68,7 +72,7 @@ func (hc HarborController) ListArtifacts(c *gin.Context) {
 func (hc HarborController) Upload(c *gin.Context) {
 	file, err := c.FormFile("file")
 	if err != nil {
-		log.WithField("上传获取文件失败",err).Error("上传文件失败")
+		log.WithField("上传获取文件失败", err).Error("上传文件失败")
 		c.JSON(http.StatusBadRequest, constant.RequestParamErr)
 		return
 	}
@@ -113,9 +117,70 @@ func (hc HarborController) Upload(c *gin.Context) {
 	//更新应用仓库
 	_ = k8s.GetAndUpdateRepo("")
 	c.JSON(http.StatusOK, nil)
+
+	// 上传的版本信息的文件名应该满足  version_info_******.json
+	//TODO 在删除 镜像包之前 , 拿出版本信息 去复制到指定的路径
+
+	versionFile := utils.Config.VersionInfoPath + "/" + utils.Config.VersionInfoFlleNamePrefix
+
+	utils.RunCmd("mkdir -p " + utils.Config.VersionInfoPath)
+	utils.RunCmd("cp " + dirPath + "/" + utils.Config.VersionInfoFlleNamePrefix + ".json " + utils.Config.VersionInfoPath)
+	version := utils.UnExt(files[1])
+	utils.RunCmd("mv " + versionFile + ".json " +
+		versionFile + "_" + version + ".json")
+	// 这里对是否有概览管理版本信息 的自定义文件 进行判断
+	if isExist, _ := utils.PathExists(versionFile + ".sum"); isExist {
+		// fmt.Println("文件存在-追加sum::"+version)
+		utils.WriteFileAppend(versionFile+".sum", version+"\n")
+	} else {
+		// fmt.Println("文件不存在-新建sum::"+version)
+		utils.RunCmd("touch " + versionFile + ".sum")
+		// 这里进行的是覆盖写
+		utils.WriteFile(versionFile+".sum", version+"\n")
+	}
 	//TODO 推送到harbor完成，删除镜像包
 	var stderr bytes.Buffer
-	cmd := exec.Command("rm -rf /tmp/*")
+	cmd := exec.Command("rm", "-rf", "/tmp/*")
 	cmd.Stderr = &stderr
 	err = cmd.Run()
+	// fmt.Println("cmd.Run() rm==>",err)
+}
+
+// UploadInfo
+// @description: 上传升级包的升级信息公告接口--从本地读取文件返回
+// @author: Zq
+// @email: zhengqiang@tna.cn
+// @date: 2022/10/18 14:04
+// @success:
+func (hc HarborController) UploadInfo(c *gin.Context) {
+
+	log.Info("VersionInfoFlleNamePrefix::" + utils.Config.VersionInfoFlleNamePrefix)
+
+	version := c.Param("version")
+
+	f, err := ioutil.ReadFile(fmt.Sprintf("%s/%s_%s.json", utils.Config.VersionInfoPath, utils.Config.VersionInfoFlleNamePrefix, version))
+	if err != nil {
+		c.JSON(http.StatusGone, err.Error())
+		return
+	}
+	res := &harbor.VersionInfo{}
+	json.Unmarshal(f, res)
+	c.JSON(http.StatusOK, res)
+}
+
+// UploadInfoSummary
+// @description: 上传升级包的升级信息公告接口--从本地读取文件返回
+// @author: Zq
+// @email: zhengqiang@tna.cn
+// @date: 2022/10/18 14:04
+// @success:
+func (hc HarborController) UploadInfoSummary(c *gin.Context) {
+	f, err := ioutil.ReadFile(fmt.Sprintf("%s/%s.%s", utils.Config.VersionInfoPath, utils.Config.VersionInfoFlleNamePrefix, "sum"))
+	if err != nil {
+		c.JSON(http.StatusGone, err.Error())
+		return
+	}
+	res := strings.Split(string(f), "\n")
+
+	c.JSON(http.StatusOK, res[:len(res)-1])
 }

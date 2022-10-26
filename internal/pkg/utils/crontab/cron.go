@@ -9,8 +9,8 @@ import (
 	"fmt"
 	"github.com/robfig/cron/v3"
 	log "github.com/sirupsen/logrus"
-	"statistic/internal/pkg/constant"
-	"statistic/internal/pkg/utils"
+	"upserver/internal/pkg/constant"
+	"upserver/internal/pkg/utils"
 )
 
 var c *cron.Cron
