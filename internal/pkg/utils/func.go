@@ -21,6 +21,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"statistic/internal/pkg/constant"
 	"strconv"
 	"strings"
 	"sync"
@@ -363,4 +364,15 @@ func WriteFile(fileName, s string) (err error) {
 	_, err = write.WriteString(s)
 	write.Flush()
 	return
+}
+
+func SearchApiType(str string) []int {
+	var arr []int
+	for i := 0; i < len(constant.ApiType); i++ {
+		n := strings.Index(constant.ApiType[i], str)
+		if n > -1 {
+			arr = append(arr, i)
+		}
+	}
+	return arr
 }

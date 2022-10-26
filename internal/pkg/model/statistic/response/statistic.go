@@ -43,4 +43,31 @@ type Realtime struct {
 	EventTid     int       `json:"event_tid"`
 	EventTime    time.Time `json:"event_time"`
 	EventType    int       `json:"event_type"`
+	EventApiName string    `json:"event_api_name"`
+	EventResult  bool      `json:"event_result"`
+}
+
+type Ranking struct {
+	X []int         `json:"x"`
+	Y []interface{} `json:"y"`
+}
+
+type Calculate struct {
+	Name string     `json:"name"`
+	Data []ApiValue `json:"data"`
+}
+type ApiValue struct {
+	Name  string `json:"name"`
+	Value int    `json:"value"`
+}
+
+//CipherApiTotal 服务次数
+type CipherApiTotal struct {
+	Time  []time.Time `json:"time"` //x轴为各时间节点
+	Total interface{} `json:"total"`
+}
+
+type CipherUsage struct {
+	Key      string  `json:"key"`
+	DocCount float64 `json:"doc_count"`
 }
