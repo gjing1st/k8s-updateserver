@@ -10,4 +10,4 @@
 - 部署工具至cmd/kubetool/kubetool.go打包
 
 # Thanks
-<a href="https://www.jetbrains.com/?from=gjing1st@gmail.com"><img src="https://gitee.com/gjing1st/images/raw/master/JetBrains.png" width="100" alt="JetBrains"/></a>
+<a href="https://www.jetbrains.com/?from=k8s-updateserver"><img src="https://gitee.com/gjing1st/images/raw/master/JetBrains.png" width="100" alt="JetBrains"/></a>
