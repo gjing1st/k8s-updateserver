@@ -16,7 +16,7 @@ var esClient *elasticsearch.Client
 // EsInit
 // @description: 初始化es数据库
 // @author: GJing
-// @email: guojing@tna.cn
+// @email: gjing1st@gmail.com
 // @date: 2022/9/23 15:14
 // @success:
 func EsInit() {
@@ -38,7 +38,7 @@ func EsInit() {
 // GetEsClient
 // @description: 获取es客户端
 // @author: GJing
-// @email: guojing@tna.cn
+// @email: gjing1st@gmail.com
 // @date: 2022/9/23 15:15
 // @success:
 func GetEsClient() *elasticsearch.Client {

@@ -9,7 +9,5 @@ import (
 func main() {
 	utils.InitConfig()
 	service.Init()
-	go apiserver.HttpStart()
-
-	select {}
+	apiserver.HttpStart()
 }

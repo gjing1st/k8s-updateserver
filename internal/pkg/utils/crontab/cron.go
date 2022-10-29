@@ -19,7 +19,7 @@ var c *cron.Cron
 // @description: 添加分钟定时任务
 // @param:
 // @author: GJing
-// @email: guojing@tna.cn
+// @email: gjing1st@gmail.com
 // @date: 2022/9/13 17:11
 // @success:
 func AddSecondFunc(s int, cmd func()) {
@@ -39,7 +39,7 @@ func InitCron() {
 // @description: 获取定时任务
 // @param:
 // @author: GJing
-// @email: guojing@tna.cn
+// @email: gjing1st@gmail.com
 // @date: 2022/9/13 17:06
 // @success:
 func GetCron() *cron.Cron {

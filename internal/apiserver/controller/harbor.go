@@ -31,7 +31,7 @@ type HarborController struct {
 // @description: 镜像仓库列表
 // @param:
 // @author: GJing
-// @email: guojing@tna.cn
+// @email: gjing1st@gmail.com
 // @date: 2022/7/25 18:05
 // @success:
 func (hc HarborController) ListRepositories(c *gin.Context) {
@@ -66,7 +66,7 @@ func (hc HarborController) ListArtifacts(c *gin.Context) {
 // Upload
 // @description: 上传升级包接口
 // @author: GJing
-// @email: guojing@tna.cn
+// @email: gjing1st@gmail.com
 // @date: 2022/7/28 14:04
 // @success:
 func (hc HarborController) Upload(c *gin.Context) {
@@ -148,8 +148,6 @@ func (hc HarborController) Upload(c *gin.Context) {
 
 // UploadInfo
 // @description: 上传升级包的升级信息公告接口--从本地读取文件返回
-// @author: Zq
-// @email: zhengqiang@tna.cn
 // @date: 2022/10/18 14:04
 // @success:
 func (hc HarborController) UploadInfo(c *gin.Context) {
@@ -170,8 +168,6 @@ func (hc HarborController) UploadInfo(c *gin.Context) {
 
 // UploadInfoSummary
 // @description: 上传升级包的升级信息公告接口--从本地读取文件返回
-// @author: Zq
-// @email: zhengqiang@tna.cn
 // @date: 2022/10/18 14:04
 // @success:
 func (hc HarborController) UploadInfoSummary(c *gin.Context) {

@@ -20,7 +20,7 @@ var mgoCli *mongo.Client
 // @description: 初始化mongodb
 // @param:
 // @author: GJing
-// @email: guojing@tna.cn
+// @email: gjing1st@gmail.com
 // @date: 2022/9/23 15:11
 // @success:
 func InitMgo() {
@@ -44,7 +44,7 @@ func InitMgo() {
 // @description: 获取mongodb
 // @param:
 // @author: GJing
-// @email: guojing@tna.cn
+// @email: gjing1st@gmail.com
 // @date: 2022/9/23 15:12
 // @success:
 func GetMgoCli() *mongo.Client {
@@ -58,7 +58,7 @@ func GetMgoCli() *mongo.Client {
 // @description: 返回要操作的表
 // @param:
 // @author: GJing
-// @email: guojing@tna.cn
+// @email: gjing1st@gmail.com
 // @date: 2022/10/8 10:38
 // @success:
 func GetCollection() *mongo.Collection {

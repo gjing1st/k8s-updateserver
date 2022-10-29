@@ -20,7 +20,7 @@ var tokenMap sync.Map
 // @param: value 变量值
 // @param: exp 过期时间
 // @author: GJing
-// @email: guojing@tna.cn
+// @email: gjing1st@gmail.com
 // @date: 2022/7/27 17:20
 // @success:
 func Set(key, value interface{}, exp time.Duration) {
@@ -34,7 +34,7 @@ func Set(key, value interface{}, exp time.Duration) {
 // @description: 获取k8s token
 // @param:
 // @author: GJing
-// @email: guojing@tna.cn
+// @email: gjing1st@gmail.com
 // @date: 2022/7/27 17:12
 // @success:
 func GetToken() (string, error) {
@@ -71,7 +71,7 @@ func GetToken() (string, error) {
 // @param: workspace 企业空间
 // @param: namespace 项目/命名空间
 // @author: GJing
-// @email: guojing@tna.cn
+// @email: gjing1st@gmail.com
 // @date: 2022/7/27 18:19
 // @success:
 func GetApp(workspace, namespace string) (res *AppListResponse, err error) {
@@ -89,7 +89,7 @@ func GetApp(workspace, namespace string) (res *AppListResponse, err error) {
 // @description: 获取应用的所有版本信息
 // @param: appid 应用id
 // @author: GJing
-// @email: guojing@tna.cn
+// @email: gjing1st@gmail.com
 // @date: 2022/7/27 18:27
 // @success:
 func GetVersions(appid string) (res *VersionResponse, err error) {
@@ -107,7 +107,7 @@ func GetVersions(appid string) (res *VersionResponse, err error) {
 // @param: appid 应用id
 // @param: versionId 要获取的版本id
 // @author: GJing
-// @email: guojing@tna.cn
+// @email: gjing1st@gmail.com
 // @date: 2022/7/28 10:39
 // @success:
 func Files(appid, versionId string) (valuesYaml string, err error) {
@@ -131,7 +131,7 @@ func Files(appid, versionId string) (valuesYaml string, err error) {
 // @description: 更新到指定版本
 // @param:
 // @author: GJing
-// @email: guojing@tna.cn
+// @email: gjing1st@gmail.com
 // @date: 2022/7/28 9:19
 // @success:
 func UpVersion(up UpVersionReq) (message string, err error) {
@@ -161,7 +161,7 @@ func UpVersion(up UpVersionReq) (message string, err error) {
 // @description: 获取应用仓库列表
 // @param:
 // @author: GJing
-// @email: guojing@tna.cn
+// @email: gjing1st@gmail.com
 // @date: 2022/8/4 9:18
 // @success:
 func GetRepoList(workspaces string) (res *AppRepoResponse, err error) {
@@ -182,7 +182,7 @@ func GetRepoList(workspaces string) (res *AppRepoResponse, err error) {
 // @description: 更新仓库
 // @param:
 // @author: GJing
-// @email: guojing@tna.cn
+// @email: gjing1st@gmail.com
 // @date: 2022/8/4 9:48
 // @success:
 func UpdateRepo(workspaces, repoId string) (message string, err error) {
@@ -206,7 +206,7 @@ func UpdateRepo(workspaces, repoId string) (message string, err error) {
 // @description: 获取应用仓库列表并更新
 // @param:
 // @author: GJing
-// @email: guojing@tna.cn
+// @email: gjing1st@gmail.com
 // @date: 2022/8/4 9:58
 // @success:
 func GetAndUpdateRepo(workspaces string) error {
@@ -231,7 +231,7 @@ func GetAndUpdateRepo(workspaces string) error {
 // @param: name string 要创建的企业空间名称
 // @param: desc string 企业空间描述
 // @author: GJing
-// @email: guojing@tna.cn
+// @email: gjing1st@gmail.com
 // @date: 2022/8/30 20:16
 // @success:l
 func CreateWorkspaces(name, aliasName, desc string) error {
@@ -250,7 +250,7 @@ func CreateWorkspaces(name, aliasName, desc string) error {
 // @description: 创建企业空间下的项目
 // @param:
 // @author: GJing
-// @email: guojing@tna.cn
+// @email: gjing1st@gmail.com
 // @date: 2022/9/1 10:41
 // @success:
 func CreateProject(name, workspace, aliasName, desc string) error {
@@ -271,7 +271,7 @@ func CreateProject(name, workspace, aliasName, desc string) error {
 // @param: repoName string 应用仓库名称
 // @param: projectName string 私有仓库中的项目名称
 // @author: GJing
-// @email: guojing@tna.cn
+// @email: gjing1st@gmail.com
 // @date: 2022/9/1 18:03
 // @success:
 func CreateRepos(harborUrl, workspace, repoName, projectName string) error {
@@ -293,7 +293,7 @@ func CreateRepos(harborUrl, workspace, repoName, projectName string) error {
 // @description: 获取应用仓库下的应用
 // @param:
 // @author: GJing
-// @email: guojing@tna.cn
+// @email: gjing1st@gmail.com
 // @date: 2022/9/2 11:39
 // @success:
 func GetRepoApps(repoId string) (res *ReposAppsResponse, err error) {
@@ -313,7 +313,7 @@ func GetRepoApps(repoId string) (res *ReposAppsResponse, err error) {
 // @description: 创建项目中的应用
 // @param:
 // @author: GJing
-// @email: guojing@tna.cn
+// @email: gjing1st@gmail.com
 // @date: 2022/9/2 14:39
 // @success:
 func CreateApp(workspace, namespace, appName string) error {
@@ -365,7 +365,7 @@ func CreateApp(workspace, namespace, appName string) error {
 // @description: 创建开发的实际项目应用。企业空间-项目-应用
 // @param:
 // @author: GJing
-// @email: guojing@tna.cn
+// @email: gjing1st@gmail.com
 // @date: 2022/9/2 14:36
 // @success:
 func CreateProjectApp(workspace, namespace, appid, versionId, conf, name string) error {
@@ -401,7 +401,7 @@ type Create struct {
 // @description: 创建企业空间，项目，应用仓库，应用
 // @param:
 // @author: GJing
-// @email: guojing@tna.cn
+// @email: gjing1st@gmail.com
 // @date: 2022/9/2 18:43
 // @success:
 func CreateAll(c *Create) (err error) {

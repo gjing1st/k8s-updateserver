@@ -19,7 +19,7 @@ import (
 // @description: 获取harbor连接基本信息
 // @param:
 // @author: GJing
-// @email: guojing@tna.cn
+// @email: gjing1st@gmail.com
 // @date: 2022/7/25 14:24
 // @success:
 func Client() (*harbor.ClientSet, error) {
@@ -42,7 +42,7 @@ func Client() (*harbor.ClientSet, error) {
 // @description: helm chart上传至私有仓库
 // @param: chartPath helmChart文件绝对路径
 // @author: GJing
-// @email: guojing@tna.cn
+// @email: gjing1st@gmail.com
 // @date: 2022/7/25 14:27
 // @success:
 func UploadChart(chartPath string) (bool, error) {
@@ -78,7 +78,7 @@ func UploadChart(chartPath string) (bool, error) {
 // @description: 镜像仓库列表
 // @param:
 // @author: GJing
-// @email: guojing@tna.cn
+// @email: gjing1st@gmail.com
 // @date: 2022/7/25 16:54
 // @success:
 func ListRepositories() (res *repository.ListRepositoriesOK, err error) {
@@ -107,7 +107,7 @@ func ListRepositories() (res *repository.ListRepositoriesOK, err error) {
 // @description: 镜像列表
 // @param: 仓库名称
 // @author: GJing
-// @email: guojing@tna.cn
+// @email: gjing1st@gmail.com
 // @date: 2022/7/25 17:57
 // @success:
 func ListArtifacts(repoName string) (res *artifact.ListArtifactsOK, err error) {
@@ -149,6 +149,6 @@ func CreateProject(projectName string) {
 	params := &project.CreateProjectParams{
 		Project: &req,
 	}
-	res, err  := clientV2.Project.CreateProject(context.TODO(), params)
-	fmt.Println("res",res,"err",err)
+	res, err := clientV2.Project.CreateProject(context.TODO(), params)
+	fmt.Println("res", res,"err",err)
 }

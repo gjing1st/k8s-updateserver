@@ -51,7 +51,7 @@ const (
 // @description: 填充时间范围解析
 // @param:
 // @author: GJing
-// @email: guojing@tna.cn
+// @email: gjing1st@gmail.com
 // @date: 2022/10/10 18:18
 // @success:
 func FillTimeRange() {

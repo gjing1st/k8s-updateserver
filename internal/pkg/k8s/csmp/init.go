@@ -17,7 +17,7 @@ import (
 // @description: ks安装后部署项目
 // @param:
 // @author: GJing
-// @email: guojing@tna.cn
+// @email: gjing1st@gmail.com
 // @date: 2022/9/2 18:44
 // @success:
 func KubeApply(path string, c *k8s.Create) {
@@ -47,7 +47,7 @@ func KubeApply(path string, c *k8s.Create) {
 // @description: 创建mysql配置字典
 // @param:
 // @author: GJing
-// @email: guojing@tna.cn
+// @email: gjing1st@gmail.com
 // @date: 2022/8/31 18:51
 // @success:
 func ApplyMysqlConf(path string) {
@@ -62,7 +62,7 @@ func ApplyMysqlConf(path string) {
 // @description: 创建数据库保密字典
 // @param:
 // @author: GJing
-// @email: guojing@tna.cn
+// @email: gjing1st@gmail.com
 // @date: 2022/9/2 17:30
 // @success:
 func ApplyMysqlSecret(path string) {
@@ -77,7 +77,7 @@ func ApplyMysqlSecret(path string) {
 // @description: 创建数据库配置字典
 // @param:
 // @author: GJing
-// @email: guojing@tna.cn
+// @email: gjing1st@gmail.com
 // @date: 2022/9/2 17:30
 // @success:
 func ApplyMysql(path string) {
@@ -92,7 +92,7 @@ func ApplyMysql(path string) {
 // @description: 将conf存储卷添加到k8s
 // @param: path 路径
 // @author: GJing
-// @email: guojing@tna.cn
+// @email: gjing1st@gmail.com
 // @date: 2022/9/2 18:06
 // @success:
 func ApplyConfPvc(path string) {

@@ -146,7 +146,7 @@ type TemplateSpec struct {
 // @description: 初始化创建企业空间请求参数
 // @param:
 // @author: GJing
-// @email: guojing@tna.cn
+// @email: gjing1st@gmail.com
 // @date: 2022/8/30 20:45
 // @success:
 func NewCreateWorkspacesRequest(name, aliasName, desc string) (req CreateWorkspacesRequest) {
@@ -193,7 +193,7 @@ type CreateProjectLabels struct {
 // @description: 创建项目初始化请求参数
 // @param:
 // @author: GJing
-// @email: guojing@tna.cn
+// @email: gjing1st@gmail.com
 // @date: 2022/9/1 10:39
 // @success:
 func NewCreateProjectRequest(name, aliasName, desc, workspace string) (req CreateProjectRequest) {
@@ -231,7 +231,7 @@ type CreateRepoRequest struct {
 	Visibility string   `json:"visibility"`
 }
 
-func NewCreateRepoRequest(url,repoName, projectName string) (req CreateRepoRequest) {
+func NewCreateRepoRequest(url, repoName, projectName string) (req CreateRepoRequest) {
 	providers := []string{"kubernetes"}
 	req = CreateRepoRequest{
 		"active",
@@ -241,7 +241,7 @@ func NewCreateRepoRequest(url,repoName, projectName string) (req CreateRepoReque
 		"Helm",
 		"30m",
 		"http",
-		fmt.Sprintf("%s/chartrepo/%s",url,projectName),
+		fmt.Sprintf("%s/chartrepo/%s", url, projectName),
 		"public",
 	}
 	return req
@@ -263,6 +263,7 @@ type ReposAppsResponse struct {
 	} `json:"items"`
 	TotalCount int `json:"total_count"`
 }
+
 //CreateProjectAppRequest 创建实际应用项目请求参数
 type CreateProjectAppRequest struct {
 	Appid     string `json:"app_id"`

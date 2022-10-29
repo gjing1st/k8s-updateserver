@@ -21,7 +21,7 @@ type K8sService struct {
 // @description: 获取k8s命名空间下应用和版本信息
 // @param:
 // @author: GJing
-// @email: guojing@tna.cn
+// @email: gjing1st@gmail.com
 // @date: 2022/7/28 11:11
 // @success:
 func (ks K8sService) GetAppAndVersion(workspace, namespace string) (res model.K8sAppAndVersion, err error) {
@@ -58,11 +58,11 @@ func (ks K8sService) GetAppAndVersion(workspace, namespace string) (res model.K8
 // @description: 解压升级包并推送到私有仓库
 // @param:
 // @author: GJing
-// @email: guojing@tna.cn
+// @email: gjing1st@gmail.com
 // @date: 2022/8/3 10:08
 // @success:
 func (ks K8sService) UnzipAndPush() error {
-	if constant.HarborPushed == 1{
+	if constant.HarborPushed == 1 {
 		return nil
 	}
 	return nil
@@ -106,10 +106,10 @@ func (ks K8sService) UnzipAndPush() error {
 	fmt.Println("projectName", projectName)
 	fmt.Println("dirPath", dirPath)
 	//解压后处理解压后的文件
-	err =  HarborService{}.DealFile(projectName, dirPath)
+	err = HarborService{}.DealFile(projectName, dirPath)
 	if err != nil {
 		constant.HarborPushed = 0
-	}else {
+	} else {
 		constant.HarborPushed = 1
 	}
 

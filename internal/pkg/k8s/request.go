@@ -22,7 +22,7 @@ var (
 // @description: 请求k8s获取token
 // @param:
 // @author: GJing
-// @email: guojing@tna.cn
+// @email: gjing1st@gmail.com
 // @date: 2022/7/27 17:12
 // @success:
 func TokenRequestTimeout(method, url string, reqData url.Values, res interface{}, d time.Duration) (sc int, err error) {
@@ -90,7 +90,7 @@ func (r *ReadCloser) Close() (err error) {
 	return
 }
 
-func JsonRequestTimeout(method,url string, reqData url.Values, res interface{}, d time.Duration) (sc int, err error) {
+func JsonRequestTimeout(method, url string, reqData url.Values, res interface{}, d time.Duration) (sc int, err error) {
 	token, err1 := GetToken()
 	if err1 != nil {
 		return 0, err
@@ -117,16 +117,15 @@ func JsonRequestTimeout(method,url string, reqData url.Values, res interface{}, 
 	req.Header.Set("Authorization", token)
 	resp, err = client.Do(req)
 	if err != nil {
-		fmt.Println("err======",err)
+		fmt.Println("err======", err)
 		return
 	}
 	defer resp.Body.Close()
 	sc = resp.StatusCode
-	if sc != http.StatusOK{
+	if sc != http.StatusOK {
 		log.WithFields(log.Fields{"http code ": sc}).Error("请求接口返回状态不是200")
 		return
 	}
-
 
 	if res != nil {
 		data, err = ioutil.ReadAll(resp.Body)
@@ -141,8 +140,6 @@ func JsonRequestTimeout(method,url string, reqData url.Values, res interface{}, 
 	return
 }
 
-
-
 // JsonRestRequestTimeout json格式请求
 func JsonRestRequestTimeout(method, url string, req, res interface{}, d time.Duration) (sc int, err error) {
 	token, err1 := GetToken()
@@ -155,7 +152,7 @@ func JsonRestRequestTimeout(method, url string, req, res interface{}, d time.Dur
 	sc = -1
 	if req != nil {
 		data, err = json.Marshal(req)
-		fmt.Println("===========reqdata===",string(data))
+		fmt.Println("===========reqdata===", string(data))
 		if err != nil {
 			return
 		}
@@ -166,7 +163,7 @@ func JsonRestRequestTimeout(method, url string, req, res interface{}, d time.Dur
 	}
 	if method == "GET" {
 		resp, err = client.Get(url)
-	}  else {
+	} else {
 		var req *http.Request
 		req, err = http.NewRequest(method, url, reader)
 		if err != nil {
@@ -177,15 +174,15 @@ func JsonRestRequestTimeout(method, url string, req, res interface{}, d time.Dur
 		resp, err = client.Do(req)
 	}
 	if err != nil {
-		fmt.Println("==err==",err)
+		fmt.Println("==err==", err)
 		return
 	}
 	defer resp.Body.Close()
 	sc = resp.StatusCode
 	if (sc != http.StatusNotAcceptable) && (sc < http.StatusOK || sc >= http.StatusMultipleChoices) {
 		data1, err1 := ioutil.ReadAll(resp.Body)
-		fmt.Println("data",string(data1))
-		fmt.Println("err1",err1)
+		fmt.Println("data", string(data1))
+		fmt.Println("err1", err1)
 
 		err = syscall.EINVAL
 		return

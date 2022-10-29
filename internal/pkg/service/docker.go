@@ -19,7 +19,7 @@ type DockerService struct {
 // @param: imageName 镜像名称（带版本号）
 // @param: tagName 标记名称（全称）
 // @author: GJing
-// @email: guojing@tna.cn
+// @email: gjing1st@gmail.com
 // @date: 2022/7/19 19:31
 // @success:
 func (ds DockerService) PushHarbor(fullName, imageName, tagName string) (err error) {
@@ -42,7 +42,7 @@ func (ds DockerService) PushHarbor(fullName, imageName, tagName string) (err err
 // Login
 // @description: 登录私有仓库
 // @author: GJing
-// @email: guojing@tna.cn
+// @email: gjing1st@gmail.com
 // @date: 2022/7/19 20:15
 // @success:
 func (ds DockerService) Login() (err error) {
@@ -67,7 +67,7 @@ func (ds DockerService) Login() (err error) {
 // @description: 镜像推送
 // @param: tagName 标记的镜像名称
 // @author: GJing
-// @email: guojing@tna.cn
+// @email: gjing1st@gmail.com
 // @date: 2022/7/19 19:31
 // @success:
 func (ds DockerService) Push(tagName string) (err error) {
@@ -91,7 +91,7 @@ func (ds DockerService) Push(tagName string) (err error) {
 // @description: 镜像导入
 // @param: fullName 镜像的全路径名称
 // @author: GJing
-// @email: guojing@tna.cn
+// @email: gjing1st@gmail.com
 // @date: 2022/7/19 19:12
 // @success:
 func (ds DockerService) Load(fullName string) (err error) {
@@ -115,7 +115,7 @@ func (ds DockerService) Load(fullName string) (err error) {
 // @param: imageName 镜像名称（带版本号）
 // @param: tagName 标记名称（全称）
 // @author: GJing
-// @email: guojing@tna.cn
+// @email: gjing1st@gmail.com
 // @date: 2022/7/19 19:15
 // @success:
 func (ds DockerService) Tag(imageName, tagName string) (err error) {

@@ -213,7 +213,7 @@ func Div(Num int) string {
 // @description: 返回文件名称去掉后缀和最后一个`.`
 // @param: fileName 文件名称
 // @author: GJing
-// @email: guojing@tna.cn
+// @email: gjing1st@gmail.com
 // @date: 2022/7/28 15:39
 // @success:
 func UnExt(fileName string) string {
@@ -329,7 +329,7 @@ func (c *connection) Exec(cmd string, host Host) (stdout string, code int, err e
 // @description: 运行系统命令
 // @param: cmdStr 要运行的命令
 // @author: GJing
-// @email: guojing@tna.cn
+// @email: gjing1st@gmail.com
 // @date: 2022/9/2 17:46
 // @success:
 func RunCommand(name string, arg ...string) (err error) {
@@ -348,7 +348,7 @@ func RunCommand(name string, arg ...string) (err error) {
 // @description:
 // @param:
 // @author: GJing
-// @email: guojing@tna.cn
+// @email: gjing1st@gmail.com
 // @date: 2022/9/2 17:52
 // @success:
 func WriteFile(fileName, s string) (err error) {
@@ -368,9 +368,6 @@ func WriteFile(fileName, s string) (err error) {
 
 // PathExists
 // @description: 判断文件是否存在
-// @param:
-// @author: Zq
-// @email: zhengqiang@tna.cn
 // @date: 2022/10/19 17:52
 // @success:
 func PathExists(path string) (bool, error) {
@@ -386,9 +383,6 @@ func PathExists(path string) (bool, error) {
 
 // RunCmd
 // @description: 运行liunx 命令并且返回数据
-// @param:
-// @author: Zq
-// @email: zhengqiang@tna.cn
 // @date: 2022/10/19
 func RunCmd(cmdStr string) string {
 	list := strings.Split(cmdStr, " ")
@@ -406,12 +400,9 @@ func RunCmd(cmdStr string) string {
 	}
 }
 
-
-// WriteFile
+// WriteFileAppend
 // @description: 追加写
-// @param:
-// @author: Zq
-// @email: guojing@tna.cn
+// @email: gjing1st@gmail.com
 // @date: 2022/9/2 17:52
 // @success:
 func WriteFileAppend(fileName, s string) (err error) {

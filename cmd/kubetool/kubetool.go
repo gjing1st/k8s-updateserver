@@ -127,7 +127,7 @@ func main() {
 // @description: 推送镜像和helm至私有仓库
 // @param:
 // @author: GJing
-// @email: guojing@tna.cn
+// @email: gjing1st@gmail.com
 // @date: 2022/9/2 18:28
 // @success:
 func PushTar(tempVersion string) {
@@ -156,7 +156,7 @@ func PushTar(tempVersion string) {
 // @description: 初始化操作系统
 // @param:
 // @author: GJing
-// @email: guojing@tna.cn
+// @email: gjing1st@gmail.com
 // @date: 2022/9/2 18:29
 // @success:
 func InitOS() {

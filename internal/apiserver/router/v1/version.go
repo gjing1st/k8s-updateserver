@@ -8,7 +8,7 @@ import (
 // @description: k8s升级相关接口
 // @param:
 // @author: GJing
-// @email: guojing@tna.cn
+// @email: gjing1st@gmail.com
 // @date: 2022/7/28 9:31
 // @success:
 func initK8sVersionApi(apiV1 *gin.RouterGroup) {

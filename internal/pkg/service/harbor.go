@@ -30,7 +30,7 @@ func Init() {
 // @param: projectName harbor项目名称，如果不传则使用library
 // @param: dirPath 镜像所在宿主机中的目录
 // @author: GJing
-// @email: guojing@tna.cn
+// @email: gjing1st@gmail.com
 // @date: 2022/7/28 15:12
 // @success:
 func (hs HarborService) DealFile(projectName, dirPath string) error {
@@ -68,7 +68,7 @@ func (hs HarborService) DealFile(projectName, dirPath string) error {
 // @param: dirPath 镜像所在宿主机中的目录
 // @param: fileName 镜像名称 ex:csmp-backend_V3.1.0.tar
 // @author: GJing
-// @email: guojing@tna.cn
+// @email: gjing1st@gmail.com
 // @date: 2022/7/28 15:06
 // @success:
 func (hs HarborService) DockerPush(projectName, dirPath, fileName string) error {
@@ -99,7 +99,7 @@ func (hs HarborService) DockerPush(projectName, dirPath, fileName string) error 
 // AddHelmRepo
 // @description: 添加helm私有仓库
 // @author: GJing
-// @email: guojing@tna.cn
+// @email: gjing1st@gmail.com
 // @date: 2022/7/29 17:24
 // @success:
 func (hs HarborService) AddHelmRepo() (err error) {
@@ -128,7 +128,7 @@ func (hs HarborService) AddHelmRepo() (err error) {
 // @description: 推送char包至私有仓库
 // @param: charName helm chart 压缩包全路径名称 ex:/home/data/csmp-0.1.0.tgz
 // @author: GJing
-// @email: guojing@tna.cn
+// @email: gjing1st@gmail.com
 // @date: 2022/7/29 17:30
 // @success:
 func (hs HarborService) HelmChartPush(charName string) (err error) {

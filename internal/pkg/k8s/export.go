@@ -23,7 +23,7 @@ import (
 // @param: database string 要创建的数据库
 // @param: password string 数据库root密码明文
 // @author: GJing
-// @email: guojing@tna.cn
+// @email: gjing1st@gmail.com
 // @date: 2022/9/1 17:28
 // @success:
 func Export(path, projectName, database, password, image string) {
@@ -50,7 +50,7 @@ func Export(path, projectName, database, password, image string) {
 // @description: 导入系统初始化文件
 // @param:
 // @author: GJing
-// @email: guojing@tna.cn
+// @email: gjing1st@gmail.com
 // @date: 2022/8/31 16:39
 // @success:
 func ExportInitOS(tempPath string) {
@@ -71,7 +71,7 @@ func ExportInitOS(tempPath string) {
 // @description: mysql服务和工作负载
 // @param:
 // @author: GJing
-// @email: guojing@tna.cn
+// @email: gjing1st@gmail.com
 // @date: 2022/8/31 16:38
 // @success:
 func ExportMysqlServer(tempPath, projectName, image string) {
@@ -94,7 +94,7 @@ func ExportMysqlServer(tempPath, projectName, image string) {
 // @description: configMap配置字典
 // @param:
 // @author: GJing
-// @email: guojing@tna.cn
+// @email: gjing1st@gmail.com
 // @date: 2022/8/31 16:39
 // @success:
 func ExportMysqlConf(tempPath, projectName string) {
@@ -110,7 +110,7 @@ func ExportMysqlConf(tempPath, projectName string) {
 // @param: database string 要创建的数据库明文
 // @param: password string 数据库root密码明文
 // @author: GJing
-// @email: guojing@tna.cn
+// @email: gjing1st@gmail.com
 // @date: 2022/8/31 16:41
 // @success:
 func ExportMysqlSecret(tempPath, projectName, database, password string) {
@@ -127,7 +127,7 @@ func ExportMysqlSecret(tempPath, projectName, database, password string) {
 // @description: 导出conf 存储卷
 // @param:
 // @author: GJing
-// @email: guojing@tna.cn
+// @email: gjing1st@gmail.com
 // @date: 2022/9/2 17:53
 // @success:
 func ExportConfPvc(tempPath, projectName string) {
@@ -170,7 +170,7 @@ func ExportUpdatePvc(tempPath, projectName string) {
 // @description: 导出kubeTool配置文件
 // @param:
 // @author: GJing
-// @email: guojing@tna.cn
+// @email: gjing1st@gmail.com
 // @date: 2022/9/3 21:12
 // @success:
 func ExportKubeConfig(fileName string) error {

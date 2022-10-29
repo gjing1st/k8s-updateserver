@@ -21,7 +21,7 @@ var dockerService service.DockerService
 // UploadTar
 // @description: 上传镜像tar包
 // @author: GJing
-// @email: guojing@tna.cn
+// @email: gjing1st@gmail.com
 // @date: 2022/7/19 18:15
 // @success:
 func (uc UploadController) UploadTar(c *gin.Context) {
@@ -53,13 +53,13 @@ func (uc UploadController) UploadTar(c *gin.Context) {
 	//镜像版本号
 	fileVersion := "latest"
 	if len(files) > 1 {
-		versions := strings.Split(files[1],".")
+		versions := strings.Split(files[1], ".")
 		fileVersion = versions[0]
 	}
 	//镜像名称
 	imageName := fileName + ":" + fileVersion
 	//标记的镜像名称
-	tagName := utils.K8sConfig.Harbor.Address+ "/" + "library" + "/" + imageName
+	tagName := utils.K8sConfig.Harbor.Address + "/" + "library" + "/" + imageName
 	err = dockerService.PushHarbor(fullName, imageName, tagName)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
@@ -68,7 +68,7 @@ func (uc UploadController) UploadTar(c *gin.Context) {
 
 }
 
-func (uc UploadController) Test(c *gin.Context)  {
+func (uc UploadController) Test(c *gin.Context) {
 	//完整路径文件名
 	Filename := "mckserver_latest.tar"
 	fullName := "/home/app/mckserver_latest.tar"
@@ -78,13 +78,13 @@ func (uc UploadController) Test(c *gin.Context)  {
 	//镜像版本号
 	fileVersion := "latest"
 	if len(files) > 1 {
-		versions := strings.Split(files[1],".")
+		versions := strings.Split(files[1], ".")
 		fileVersion = versions[0]
 	}
 	//镜像名称
 	imageName := fileName + ":" + fileVersion
 	//标记的镜像名称
-	tagName := utils.K8sConfig.Harbor.Address+ "/" + "library" + "/" + imageName
+	tagName := utils.K8sConfig.Harbor.Address + "/" + "library" + "/" + imageName
 	err := dockerService.PushHarbor(fullName, imageName, tagName)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())

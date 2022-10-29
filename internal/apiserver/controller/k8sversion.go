@@ -24,7 +24,7 @@ var k8sService service.K8sService
 // @description: 获取k8s中应用的版本信息，使用项目中的第一个应用
 // @param:
 // @author: GJing
-// @email: guojing@tna.cn
+// @email: gjing1st@gmail.com
 // @date: 2022/7/28 9:59
 // @success:
 func (kv K8sVersionController) GetVersion(c *gin.Context) {
@@ -85,7 +85,7 @@ func (kv K8sVersionController) GetVersion(c *gin.Context) {
 // UpdateVersion
 // @description: 更新应用版本信息
 // @author: GJing
-// @email: guojing@tna.cn
+// @email: gjing1st@gmail.com
 // @date: 2022/7/28 10:31
 // @success:
 func (kv K8sVersionController) UpdateVersion(c *gin.Context) {
@@ -166,7 +166,7 @@ func (kv K8sVersionController) UpdateVersion(c *gin.Context) {
 // @description: 获取版本列表
 // @param:
 // @author: GJing
-// @email: guojing@tna.cn
+// @email: gjing1st@gmail.com
 // @date: 2022/8/30 10:05
 // @success:
 func (kv K8sVersionController) GetVersionList(c *gin.Context) {
