@@ -17,5 +17,6 @@ func initK8sVersionApi(apiV1 *gin.RouterGroup) {
 	api.GET("/latest", k8sController.GetVersion)
 	api.GET("/list", k8sController.GetVersionList)
 	api.POST("/update", k8sController.UpdateVersion)
+	api.GET("/info", k8sController.VersionInfo)
 
 }

@@ -62,9 +62,14 @@ func main() {
 	//fmt.Println("Password", config.Harbor.Password)
 	//fmt.Println("Admin", config.Harbor.Admin)
 	//return
-	tempPath = "./kubetool/"
+	tempPath = "./kubetools/"
 	tempVersion := tempPath + "version/"
-	_ = os.MkdirAll(tempVersion, os.ModePerm)
+	fmt.Println("临时目录路径", tempVersion)
+	err = os.MkdirAll(tempVersion, os.ModePerm)
+	if err != nil {
+		fmt.Println("创建临时目录失败", err)
+		return
+	}
 	//创建k8s中应用
 	if configFileName == "" {
 		configFileName = constant.KubeConfigName
@@ -144,6 +149,7 @@ func PushTar(tempVersion string) {
 	err := harborService.DealFile(projectName, tempVersion+utils.UnExt(zipFileName))
 	if err != nil {
 		fmt.Println("=======err", err)
+		return
 	}
 	err = utils.RunCommand("rm", "-rf", tempVersion+utils.UnExt(zipFileName))
 	if err != nil {

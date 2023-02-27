@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"fmt"
 	configor "github.com/jinzhu/configor"
 )
 
@@ -30,16 +31,25 @@ var Config = struct {
 		MinConns int    `default:"90"`  //连接池最小连接数量 不要太小
 		MaxConns int    `default:"120"` //连接池最大连接数量 两者相差不要太大
 	}
+	IPM struct {
+		Addr string `default:"http://114.115.134.131:9681"`
+	}
+	VersionInfo struct {
+		Manufacturer string `default:"笛卡尔盾"`
+		Serial       string `default:"1564835VAF348CF"`
+		Algorithm    string `default:"SM2、SM3、SM4"`
+	}
 }{}
 
 var K8sConfig = struct {
 	K8s struct {
-		//Url string `default:"http://ks-apiserver.kubesphere-system.svc"`
-		Url       string `default:"http://192.168.0.80:31177"`
-		Username  string `default:"user"`
-		Password  string `default:"password"`
+		Addr string `default:"http://ks-apiserver.kubesphere-system.svc"`
+		//Namespace string `default:"csmp"`
+		//Workspace string `default:"dked"`
+		Username  string `default:"csmp"`
+		Password  string `default:"Dked@213"`
 		Workspace struct {
-			Name      string `default:"dked"`
+			Name      string `default:"dsjj"`
 			Aliasname string `default:"dked-space"`
 			Desc      string `default:"企业空间"`
 		}
@@ -58,18 +68,46 @@ var K8sConfig = struct {
 			Password string `default:"123456"`
 			Image    string `default:"mysql:5.7.35"`
 		}
-		ElasticSearch struct {
-			Address string `default:"elasticsearch-logging-data.kubesphere-logging-system.svc:9200"`
+	}
+	Harbor struct {
+		Address string `default:"core.harbor.dked:30002"`
+		//Address  string `default:"http://192.168.0.80:30002"`
+		Admin    string `default:"admin"`
+		Password string `default:"Harbor12345"`
+		Project  string `default:"csmp"`
+	}
+	Backend struct {
+		Addr string `default:"http://csmp-backend.csmp:8100"`
+	}
+}{}
+
+var KubeToolConfig = struct {
+	K8s struct {
+		Workspace struct {
+			Name      string `default:"dked"`
+			Aliasname string `default:"dked-space"`
+			Desc      string `default:"企业空间"`
 		}
-		Statistic struct {
-			CrontabTime   int    `default:"120"`
-			MongoHost     string `default:"localhost:27017"`
-			MongoDatabase string `default:"csmp"`
-			Collection    string `default:"statistic"`
+		//Url string `default:"http://ks-apiserver.kubesphere-system.svc"`
+		Url       string `default:"http://192.168.0.80:31177"`
+		Namespace struct {
+			Name      string `default:"csmp"`
+			Aliasname string `default:"csmp-space"`
+			Desc      string `default:"命名空间"`
+		}
+		Repo struct {
+			Name        string `default:"harbor-repo"`
+			Projectname string `default:"library"`
+		}
+		Appname string `default:"csmp"`
+		Mysql   struct {
+			Database string `default:"mmyypt_db"`
+			Password string `default:"123456"`
 		}
 	}
 	Harbor struct {
-		Address  string `default:"core.harbor.dked:30002"`
+		//Address  string `default:"core.harbor.dked:30002"`
+		Address  string `default:"http://192.168.0.80:30002"`
 		Admin    string `default:"admin"`
 		Password string `default:"Harbor12345"`
 		Project  string `default:"csmp"`
@@ -82,5 +120,6 @@ func InitConfig() {
 	if err != nil {
 		panic("config load error" + err.Error())
 	}
-	err = configor.Load(&K8sConfig, "./config/csmp-k8s.yml")
+	err = configor.Load(&K8sConfig, "./config/k8s.yml")
+	fmt.Println(K8sConfig)
 }

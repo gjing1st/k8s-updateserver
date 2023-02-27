@@ -52,7 +52,7 @@ func GetToken() (string, error) {
 	reqData.Add("client_id", "kubesphere")
 	reqData.Add("client_secret", "kubesphere")
 
-	reqUrl := utils.K8sConfig.K8s.Url + "/oauth/token"
+	reqUrl := utils.K8sConfig.K8s.Addr + "/oauth/token"
 	httpCode, err1 := TokenRequestTimeout("POST", reqUrl, reqData, &res, time.Second*10)
 	if err1 != nil || httpCode != http.StatusOK {
 		log.WithFields(log.Fields{"err": err1, "reqData": reqData, "reqUrl": reqUrl}).Info("获取k8s token失败")
@@ -75,7 +75,7 @@ func GetToken() (string, error) {
 // @date: 2022/7/27 18:19
 // @success:
 func GetApp(workspace, namespace string) (res *AppListResponse, err error) {
-	reqUrl := utils.K8sConfig.K8s.Url + "/kapis/openpitrix.io/v1/workspaces/" +
+	reqUrl := utils.K8sConfig.K8s.Addr + "/kapis/openpitrix.io/v1/workspaces/" +
 		workspace + "/namespaces/" + namespace + "/applications"
 	httpCode, err1 := JsonRequestTimeout("GET", reqUrl, nil, &res, time.Second*10)
 	if err1 != nil || httpCode != http.StatusOK {
@@ -93,7 +93,7 @@ func GetApp(workspace, namespace string) (res *AppListResponse, err error) {
 // @date: 2022/7/27 18:27
 // @success:
 func GetVersions(appid string) (res *VersionResponse, err error) {
-	reqUrl := utils.K8sConfig.K8s.Url + "/kapis/openpitrix.io/v1/apps/" + appid + "/versions" + "?orderBy=sequence&reverse=true"
+	reqUrl := utils.K8sConfig.K8s.Addr + "/kapis/openpitrix.io/v1/apps/" + appid + "/versions" + "?orderBy=sequence&reverse=true"
 	httpCode, err1 := JsonRequestTimeout("GET", reqUrl, nil, &res, time.Second*10)
 	if err1 != nil || httpCode != http.StatusOK {
 		log.WithField("err", err1).Info("获取应用列表失败")
@@ -112,7 +112,7 @@ func GetVersions(appid string) (res *VersionResponse, err error) {
 // @success:
 func Files(appid, versionId string) (valuesYaml string, err error) {
 	var res *FilesResponse
-	reqUrl := utils.K8sConfig.K8s.Url + "/kapis/openpitrix.io/v1/apps/" + appid + "/versions/" + versionId + "/files"
+	reqUrl := utils.K8sConfig.K8s.Addr + "/kapis/openpitrix.io/v1/apps/" + appid + "/versions/" + versionId + "/files"
 	httpCode, err1 := JsonRequestTimeout("GET", reqUrl, nil, &res, time.Second*10)
 	if err1 != nil || httpCode != http.StatusOK {
 		log.WithField("err", err1).Info("获取版本文件失败")
@@ -135,7 +135,7 @@ func Files(appid, versionId string) (valuesYaml string, err error) {
 // @date: 2022/7/28 9:19
 // @success:
 func UpVersion(up UpVersionReq) (message string, err error) {
-	reqUrl := utils.K8sConfig.K8s.Url + "/kapis/openpitrix.io/v1/workspaces/" +
+	reqUrl := utils.K8sConfig.K8s.Addr + "/kapis/openpitrix.io/v1/workspaces/" +
 		up.Workspace + "/namespaces/" + up.Namespace + "/applications/" + up.ClusterId
 	//reqData := url.Values{}
 	//reqData.Add("app_id", up.AppId)
@@ -168,7 +168,7 @@ func GetRepoList(workspaces string) (res *AppRepoResponse, err error) {
 	if workspaces == "" {
 		workspaces = utils.K8sConfig.K8s.Workspace.Name
 	}
-	reqUrl := utils.K8sConfig.K8s.Url + "/kapis/openpitrix.io/v1/workspaces/" + workspaces + "/repos"
+	reqUrl := utils.K8sConfig.K8s.Addr + "/kapis/openpitrix.io/v1/workspaces/" + workspaces + "/repos"
 	httpCode, err1 := JsonRequestTimeout("GET", reqUrl, nil, &res, time.Second*10)
 	if err1 != nil || httpCode != http.StatusOK {
 		log.WithField("err", err1).Info("获取应用仓库列表失败")
@@ -189,7 +189,7 @@ func UpdateRepo(workspaces, repoId string) (message string, err error) {
 	if workspaces == "" {
 		workspaces = utils.K8sConfig.K8s.Workspace.Name
 	}
-	reqUrl := utils.K8sConfig.K8s.Url + "/kapis/openpitrix.io/v1/workspaces/" + workspaces + "/repos/" + repoId + "/action"
+	reqUrl := utils.K8sConfig.K8s.Addr + "/kapis/openpitrix.io/v1/workspaces/" + workspaces + "/repos/" + repoId + "/action"
 	var reqData UpdateRequest
 	reqData.Action = "index"
 	var res *MessageResponse
@@ -235,7 +235,7 @@ func GetAndUpdateRepo(workspaces string) error {
 // @date: 2022/8/30 20:16
 // @success:l
 func CreateWorkspaces(name, aliasName, desc string) error {
-	reqUrl := utils.K8sConfig.K8s.Url + "/kapis/tenant.kubesphere.io/v1alpha2/workspaces"
+	reqUrl := utils.K8sConfig.K8s.Addr + "/kapis/tenant.kubesphere.io/v1alpha2/workspaces"
 	reqData := NewCreateWorkspacesRequest(name, aliasName, desc)
 
 	httpCode, err := JsonRestRequestTimeout("POST", reqUrl, reqData, nil, time.Second*10)
@@ -255,7 +255,7 @@ func CreateWorkspaces(name, aliasName, desc string) error {
 // @success:
 func CreateProject(name, workspace, aliasName, desc string) error {
 	reqData := NewCreateProjectRequest(name, aliasName, desc, workspace)
-	reqUrl := utils.K8sConfig.K8s.Url + "/kapis/tenant.kubesphere.io/v1alpha2/workspaces/" + workspace + "/namespaces"
+	reqUrl := utils.K8sConfig.K8s.Addr + "/kapis/tenant.kubesphere.io/v1alpha2/workspaces/" + workspace + "/namespaces"
 
 	httpCode, err := JsonRestRequestTimeout("POST", reqUrl, reqData, nil, time.Second*10)
 	if err != nil || httpCode != http.StatusOK {
@@ -280,7 +280,7 @@ func CreateRepos(harborUrl, workspace, repoName, projectName string) error {
 	}
 	//TODO 创建harbor中的项目
 	reqData := NewCreateRepoRequest(harborUrl, repoName, projectName)
-	reqUrl := utils.K8sConfig.K8s.Url + "/kapis/openpitrix.io/v1/workspaces/" + workspace + "/repos"
+	reqUrl := utils.K8sConfig.K8s.Addr + "/kapis/openpitrix.io/v1/workspaces/" + workspace + "/repos"
 	httpCode, err := JsonRestRequestTimeout("POST", reqUrl, reqData, nil, time.Second*10)
 	if err != nil || httpCode != http.StatusOK {
 		log.WithFields(log.Fields{"httpCode": httpCode, "err": err, "reqUrl": reqUrl, "res": nil}).Info("创建应用仓库失败")
@@ -298,7 +298,7 @@ func CreateRepos(harborUrl, workspace, repoName, projectName string) error {
 // @success:
 func GetRepoApps(repoId string) (res *ReposAppsResponse, err error) {
 	//reqUrl := utils.K8sConfig.K8s.Url + "/kapis/openpitrix.io/v1/apps?orderBy=create_time&paging=limit%3D12%2Cpage%3D1&conditions=status%3Dactive%2Crepo_id%3Drepo-95x39n214x9p1o&reverse=true"
-	reqUrl := utils.K8sConfig.K8s.Url + "/kapis/openpitrix.io/v1/apps?orderBy=create_time&conditions=repo_id=" + repoId
+	reqUrl := utils.K8sConfig.K8s.Addr + "/kapis/openpitrix.io/v1/apps?orderBy=create_time&conditions=repo_id=" + repoId
 
 	httpCode, err1 := JsonRequestTimeout("GET", reqUrl, nil, &res, time.Second*10)
 	if err1 != nil || httpCode != http.StatusOK {
@@ -375,7 +375,7 @@ func CreateProjectApp(workspace, namespace, appid, versionId, conf, name string)
 		name,
 		versionId,
 	}
-	reqUrl := utils.K8sConfig.K8s.Url + fmt.Sprintf("/kapis/openpitrix.io/v1/workspaces/%s/namespaces/%s/applications", workspace, namespace)
+	reqUrl := utils.K8sConfig.K8s.Addr + fmt.Sprintf("/kapis/openpitrix.io/v1/workspaces/%s/namespaces/%s/applications", workspace, namespace)
 	httpCode, err := JsonRestRequestTimeout("POST", reqUrl, reqData, nil, time.Second*10)
 	if err != nil || httpCode != http.StatusOK {
 		log.WithFields(log.Fields{"httpCode": httpCode, "err": err, "reqUrl": reqUrl, "res": nil}).Info("创建项目失败")

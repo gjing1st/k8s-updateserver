@@ -5,6 +5,7 @@ go 1.17
 require (
 	github.com/elastic/go-elasticsearch/v7 v7.17.1
 	github.com/gin-gonic/gin v1.8.1
+	github.com/go-resty/resty/v2 v2.7.0
 	github.com/goharbor/go-client v0.25.0
 	github.com/jinzhu/configor v1.2.1
 	github.com/robfig/cron/v3 v3.0.1

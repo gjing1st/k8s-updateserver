@@ -20,6 +20,13 @@ type GetVersionResponse struct {
 	Last int `json:"last"`
 }
 
+//VersionInfo 软件信息
+type VersionInfo struct {
+	Manufacturer string `json:"manufacturer"`
+	Version      string `json:"version"`
+	Serial       string `json:"serial"`
+	Algorithm    string `json:"algorithm"`
+}
 type GetVersionListResponse struct {
 	Appid      string `json:"appid"`
 	NowVersion string `json:"current"`
@@ -40,4 +47,12 @@ type UpdateVersionRequest struct {
 type K8sAppAndVersion struct {
 	App     k8s.AppListResponse
 	Version k8s.VersionResponse
+}
+
+type LogWriteReq struct {
+	Type     uint   `json:"type"`
+	Info     string `json:"info"`
+	OpName   string `json:"adminname"`
+	TenantId uint   `json:"tenantId"`
+	Ip       string `json:"ip"`
 }

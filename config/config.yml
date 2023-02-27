@@ -31,3 +31,7 @@ mysql:
   port: 3306
   minconns: 160
   maxconns: 200
+versioninfo:
+  manufacturer: 笛卡尔盾
+  serial: 1564835VAF348CF
+  algorithm: SM2、SM3、SM4

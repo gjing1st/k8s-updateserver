@@ -368,6 +368,9 @@ func WriteFile(fileName, s string) (err error) {
 
 // PathExists
 // @description: 判断文件是否存在
+// @param:
+// @author: Zq
+// @email: zhengqiang@tna.cn
 // @date: 2022/10/19 17:52
 // @success:
 func PathExists(path string) (bool, error) {
@@ -383,6 +386,9 @@ func PathExists(path string) (bool, error) {
 
 // RunCmd
 // @description: 运行liunx 命令并且返回数据
+// @param:
+// @author: Zq
+// @email: zhengqiang@tna.cn
 // @date: 2022/10/19
 func RunCmd(cmdStr string) string {
 	list := strings.Split(cmdStr, " ")
@@ -400,8 +406,10 @@ func RunCmd(cmdStr string) string {
 	}
 }
 
-// WriteFileAppend
+// WriteFile
 // @description: 追加写
+// @param:
+// @author: Zq
 // @email: gjing1st@gmail.com
 // @date: 2022/9/2 17:52
 // @success:

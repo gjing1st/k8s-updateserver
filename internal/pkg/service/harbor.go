@@ -20,9 +20,15 @@ var dockerService DockerService
 
 func Init() {
 	//docker登录
-	dockerService.Login()
+	err := dockerService.Login()
+	if err != nil {
+		log.WithField("err", err).Panic("docker登录失败")
+	}
 	//添加私有仓库
-	HarborService{}.AddHelmRepo()
+	_ = HarborService{}.AddHelmRepo()
+	if err != nil {
+		log.WithField("err", err).Error("helm登录失败")
+	}
 }
 
 // DealFile
@@ -39,6 +45,7 @@ func (hs HarborService) DealFile(projectName, dirPath string) error {
 		log.WithFields(log.Fields{"dirPath": dirPath, "err": err}).Error("读取目录中的文件错误")
 		return err
 	}
+	Init() //登录docker和helm
 	var has HarborService
 	//遍历解压后目录中的所有文件
 	for _, fileInfo := range fileInfos {
@@ -107,7 +114,7 @@ func (hs HarborService) AddHelmRepo() (err error) {
 	repoAddress := "http://" + utils.K8sConfig.Harbor.Admin + ":" + utils.K8sConfig.Harbor.Password + "@" +
 		utils.K8sConfig.Harbor.Address + "/chartrepo/" + utils.K8sConfig.Harbor.Project
 	var stderr bytes.Buffer
-	cmd := exec.Command("helm", "repo", "add", constant.HelmRepoName, repoAddress)
+	cmd := exec.Command("helm", "repo", "add", "--insecure-skip-tls-verify", constant.HelmRepoName, repoAddress)
 	cmd.Stderr = &stderr
 	err = cmd.Run()
 	//fmt.Println("======",cmd.String())

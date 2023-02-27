@@ -23,7 +23,7 @@ k8s:
   repo: 
     name: harbor
     #harbor私有仓库中的项目名称
-    projectname: library
+    projectname: csmp
   #要部署的应用名称
   appname: csmp
   mysql:
@@ -32,7 +32,7 @@ k8s:
     image: core.harbor.dked:30002/csmp/mysql:5.7.35
 
 harbor:
-  address: http://core.harbor.dked:30002
+  address: core.harbor.dked:30002
   admin: admin
   password: Harbor12345
   project: csmp

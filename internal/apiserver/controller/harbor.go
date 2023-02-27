@@ -14,6 +14,7 @@ import (
 	"upserver/internal/pkg/constant"
 	"upserver/internal/pkg/harbor"
 	"upserver/internal/pkg/k8s"
+	"upserver/internal/pkg/model"
 	"upserver/internal/pkg/service"
 	"upserver/internal/pkg/utils"
 
@@ -71,8 +72,20 @@ func (hc HarborController) ListArtifacts(c *gin.Context) {
 // @success:
 func (hc HarborController) Upload(c *gin.Context) {
 	file, err := c.FormFile("file")
+
+	adminname := c.DefaultPostForm("adminname", "运维角色")
+
+	fmt.Printf("adminname::%s \n", adminname)
+	reqLogWrite := model.LogWriteReq{
+		Type:     1,
+		OpName:   adminname,
+		TenantId: 0,
+		Ip:       c.ClientIP(),
+	}
 	if err != nil {
 		log.WithField("上传获取文件失败", err).Error("上传文件失败")
+		reqLogWrite.Info = "上传更新包失败"
+		utils.UserLogWrite(reqLogWrite, constant.WriteLogWaitTime)
 		c.JSON(http.StatusBadRequest, constant.RequestParamErr)
 		return
 	}
@@ -80,7 +93,7 @@ func (hc HarborController) Upload(c *gin.Context) {
 	fileExt := path.Ext(file.Filename)
 	if fileExt != ".zip" {
 		log.WithField("fileExt", fileExt).Error(constant.RequestErrExt)
-		c.JSON(http.StatusGone, constant.RequestErrExt)
+		c.JSON(http.StatusBadRequest, constant.RequestErrExt)
 		return
 	}
 	//日期存放路径
@@ -93,8 +106,13 @@ func (hc HarborController) Upload(c *gin.Context) {
 	//存放文件
 	if err := c.SaveUploadedFile(file, fullName); err != nil {
 		c.JSON(http.StatusInternalServerError, err.Error())
+		reqLogWrite.Info = "上传更新包(" + file.Filename + ")失败"
+		utils.UserLogWrite(reqLogWrite, constant.WriteLogWaitTime)
 		return
 	}
+
+	reqLogWrite.Info = "上传更新包(" + file.Filename + ")成功"
+	utils.UserLogWrite(reqLogWrite, constant.WriteLogWaitTime)
 	constant.HarborPushed = 0
 	//c.JSON(http.StatusOK, nil)
 	////上传成功后先返回成功，再解压缩和推送私有仓库
@@ -109,13 +127,23 @@ func (hc HarborController) Upload(c *gin.Context) {
 	//解压后处理解压后的文件
 	err = harborService.DealFile(projectName, dirPath)
 	if err == nil {
+		reqLogWrite.Info = "平台服务升级失败，失败版本为" + file.Filename
+		defer utils.UserLogWrite(reqLogWrite, constant.WriteLogWaitTime)
 		constant.HarborPushed = 1
 		//c.JSON(http.StatusInternalServerError, err.Error())
 		//return
 	}
 
 	//更新应用仓库
-	_ = k8s.GetAndUpdateRepo("")
+	if err := k8s.GetAndUpdateRepo(""); err != nil {
+		reqLogWrite.Info = "平台服务升级失败，失败版本为" + file.Filename
+		utils.UserLogWrite(reqLogWrite, constant.WriteLogWaitTime)
+		c.JSON(http.StatusOK, nil)
+	} else {
+		reqLogWrite.Info = "平台服务升级成功，当前版本为" + file.Filename
+		utils.UserLogWrite(reqLogWrite, constant.WriteLogWaitTime)
+	}
+
 	c.JSON(http.StatusOK, nil)
 
 	// 上传的版本信息的文件名应该满足  version_info_******.json
@@ -148,6 +176,8 @@ func (hc HarborController) Upload(c *gin.Context) {
 
 // UploadInfo
 // @description: 上传升级包的升级信息公告接口--从本地读取文件返回
+// @author: Zq
+// @email: zhengqiang@tna.cn
 // @date: 2022/10/18 14:04
 // @success:
 func (hc HarborController) UploadInfo(c *gin.Context) {
@@ -168,6 +198,8 @@ func (hc HarborController) UploadInfo(c *gin.Context) {
 
 // UploadInfoSummary
 // @description: 上传升级包的升级信息公告接口--从本地读取文件返回
+// @author: Zq
+// @email: zhengqiang@tna.cn
 // @date: 2022/10/18 14:04
 // @success:
 func (hc HarborController) UploadInfoSummary(c *gin.Context) {

@@ -26,8 +26,8 @@ mysql:
   ip: mysql.csmp
   port: 3306
   username: root
-  password: 123456
-  dbname: test
+  password: zf12345678
+  dbname: mmyypt_db
   readtimeout: 10000
   writetimeout: 10000
 images:
