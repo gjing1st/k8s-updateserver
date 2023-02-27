@@ -8,5 +8,7 @@
 ## 2 使用说明
 - 升级服务可通过Dockerfile打包成镜像，随业务系统一起部署至k8s中
 - 部署工具至cmd/kubetool/kubetool.go打包
+# Thanks
+<a href="https://www.jetbrains.com/?from=gjing1st@gmail.com"><img src="https://gitee.com/gjing1st/images/raw/master/JetBrains.png" width="100" alt="JetBrains"/></a>
 
 
