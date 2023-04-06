@@ -1,0 +1,17 @@
+k8s:
+  addr: http://192.168.0.80:31177
+  username: csmp
+  password: Dked@213
+  workspace:
+    name: dked
+  namespace:
+    name: csmp
+harbor:
+  address: core.harbor.dked:30002
+  admin: admin
+  password: Harbor12345
+  project: csmp
+backend:
+  addr: http://admin.csmp:8100
+
+
